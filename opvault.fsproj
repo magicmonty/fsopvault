@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="BinaryParser.fs" />
+    <Compile Include="Profile.fs" />
+    <Compile Include="OPData.fs" />
+    <Compile Include="Category.fs" />
+    <Compile Include="Designation.fs" />
+    <Compile Include="FieldType.fs" />
+    <Compile Include="Item.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <Import Project=".paket\Paket.Restore.targets" />
+</Project>

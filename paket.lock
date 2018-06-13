@@ -1,0 +1,11 @@
+GENERATE-LOAD-SCRIPTS: ON
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FSharp.Core (4.5) - restriction: && (< net40) (< portable-net45+win8+wp8+wpa81)
+    FSharp.Data (2.4.6)
+      FSharp.Core (>= 4.0.0.1) - restriction: && (< net40) (< portable-net45+win8+wp8+wpa81)
+      Zlib.Portable (>= 1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
+    Microsoft.AspNetCore.Cryptography.Internal (2.1) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Cryptography.KeyDerivation (2.1)
+      Microsoft.AspNetCore.Cryptography.Internal (>= 2.1) - restriction: >= netstandard2.0
+    Zlib.Portable (1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
