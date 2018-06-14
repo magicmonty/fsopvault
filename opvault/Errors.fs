@@ -15,15 +15,20 @@ module Errors =
   type ParserError = 
     | BinaryParserError of int64 * string
     | JSONParserError of string
+    | WrongFormatError
 
   type OPDataError =
     | CouldNotAuthenticate
     | EmptyCipherText
     | OPDataIsNotDecrypted
 
+  type BandFileError =
+    | InvalidBandFileFormat
+
   type OPVaultError =
     | FileError of FileError
     | ProfileError of ProfileError
     | ParserError of ParserError
     | OPDataError of OPDataError
+    | BandFileError of BandFileError
     | UnknownError of string

@@ -50,30 +50,7 @@ module Profile =
 
   let private profileError error = error |> ProfileError |> Error
 
-  let private fromUnixTimeStamp (value: int) = 
-    let dtDateTime = DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
-    (dtDateTime.AddSeconds (float value)).ToLocalTime()
-  
-  let private fromBase64 (value: string) : byte array =
-    Convert.FromBase64String value
-
-  let private makeJSONText (content: string) = 
-    let content =
-      content
-        .Replace("\r\n","")
-        .Replace("\r","")
-        .Replace("\n","")
-        .Replace(" ", "")
-        .Replace("\t","")
-        .Trim()
-
-    if content.StartsWith(startMarker) && content.EndsWith(endMarker)
-    then 
-      let json = content.Substring (startMarker |> String.length)
-      let json = json.Substring (0, (json |> String.length) - (endMarker |> String.length))
-      let json = sprintf "{%s}" json
-      Ok json
-    else profileError CouldNotReadProfile
+  let private makeJSONText = String.makeJSON startMarker endMarker
 
   let private parseProfileJSON (json: string) =
     try
@@ -88,14 +65,14 @@ module Profile =
       let! json = content |> parseProfileJSON
       return EncryptedProfile 
         { LastUpdatedBy = json.LastUpdatedBy
-          UpdatedAt = json.UpdatedAt |> Option.map fromUnixTimeStamp
+          UpdatedAt = json.UpdatedAt |> Option.map DateTime.fromUnixTimeStamp
           ProfileName = json.ProfileName
-          Salt = json.Salt |> fromBase64
-          MasterKey = json.MasterKey |> fromBase64
-          OverviewKey = json.OverviewKey |> fromBase64
+          Salt = json.Salt |> ByteArray.fromBase64
+          MasterKey = json.MasterKey |> ByteArray.fromBase64
+          OverviewKey = json.OverviewKey |> ByteArray.fromBase64
           Iterations = json.Iterations
           UUID = json.Uuid
-          CreatedAt = json.CreatedAt |> fromUnixTimeStamp } 
+          CreatedAt = json.CreatedAt |> DateTime.fromUnixTimeStamp } 
     }
 
   let getDecryptedOverviewKey profile =

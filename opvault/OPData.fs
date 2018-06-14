@@ -149,7 +149,7 @@ module OPData =
 
   let getPlainText (data: OPData) =
     match data.PlainText with
-    | Some plaintext -> Ok (sprintf "%s" (plaintext |> Array.fold (fun c n -> sprintf "%s%c" c (char n)) ""))
+    | Some plaintext -> Ok (sprintf "%s" (System.Text.Encoding.UTF8.GetString plaintext))
     | None -> OPDataIsNotDecrypted |> OPDataError |> Error
 
   let getDecryptedKeys (data: OPData) =
