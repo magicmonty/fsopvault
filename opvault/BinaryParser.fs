@@ -9,7 +9,11 @@ module BinaryParser =
     
     with member this.Function = match this with BinParser pFunc -> pFunc                 
 
-  let private parserError (binaryReader: BinaryReader) message = (binaryReader.BaseStream.Position, message) |> ParserError |> Error
+  let private parserError (binaryReader: BinaryReader) message = 
+    (binaryReader.BaseStream.Position, message) 
+    |> BinaryParserError 
+    |> ParserError 
+    |> Error
 
   let IOExceptionHandlingWrapper(f:BinaryReader -> Result<'a * BinaryReader, OPVaultError>) =
     fun i -> try 

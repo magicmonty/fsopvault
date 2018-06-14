@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Errors.fs" />
+    <Compile Include="File.fs" />
     <Compile Include="ResultModule.fs" />
     <Compile Include="BinaryParser.fs" />
     <Compile Include="OPData.fs" />

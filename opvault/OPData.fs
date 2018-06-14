@@ -4,7 +4,6 @@ open System.Security.Cryptography
 open System.IO
 open System
 open Errors
-open FSharp.Results
 
 type OPData = { PlainTextSize: uint64
                 PaddingSize: uint64
@@ -21,9 +20,13 @@ type OPData = { PlainTextSize: uint64
                                   this.CipherText |]
  
                 member this.Authenticate (keys: KeyPair) =
-                  if (keys.Hmac this.HashBytes) = this.HMAC
-                  then Ok (keys, this)
-                  else CouldNotAuthenticate |> OPDataError |> Error
+                  let calculatedHMAC = keys.Hmac this.HashBytes
+                  if calculatedHMAC = this.HMAC
+                  then Ok ()
+                  else 
+                    printfn "Should be %A" this.HMAC
+                    printfn "but was %A" calculatedHMAC
+                    CouldNotAuthenticate |> OPDataError |> Error
 
 and KeyPair = { EncryptionKey: byte array
                 AuthenticationKey: byte array }
@@ -140,7 +143,7 @@ module OPData =
 
   let authenticateAndDecrypt (keys: KeyPair) (data: OPData) =
     trial {
-      let! keys, data = authenticate keys data
+      do! authenticate keys data
       return! keys.Decrypt data
     }
 

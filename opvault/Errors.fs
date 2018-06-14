@@ -1,6 +1,9 @@
 namespace OPVault
 
 module Errors =
+  type FileError =
+    | FileNotFound of string
+
   type ProfileError =
     | CouldNotReadProfile
     | ProfileNotFound
@@ -9,7 +12,9 @@ module Errors =
     | CouldNotFindMasterKey
     | UnknownProfileError of string
 
-  type ParserError = int64 * string
+  type ParserError = 
+    | BinaryParserError of int64 * string
+    | JSONParserError of string
 
   type OPDataError =
     | CouldNotAuthenticate
@@ -17,6 +22,8 @@ module Errors =
     | OPDataIsNotDecrypted
 
   type OPVaultError =
+    | FileError of FileError
     | ProfileError of ProfileError
     | ParserError of ParserError
     | OPDataError of OPDataError
+    | UnknownError of string
