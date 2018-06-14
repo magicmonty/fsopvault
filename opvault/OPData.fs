@@ -23,10 +23,7 @@ type OPData = { PlainTextSize: uint64
                   let calculatedHMAC = keys.Hmac this.HashBytes
                   if calculatedHMAC = this.HMAC
                   then Ok ()
-                  else 
-                    printfn "Should be %A" this.HMAC
-                    printfn "but was %A" calculatedHMAC
-                    CouldNotAuthenticate |> OPDataError |> Error
+                  else CouldNotAuthenticate |> OPDataError |> Error
 
 and KeyPair = { EncryptionKey: byte array
                 AuthenticationKey: byte array }

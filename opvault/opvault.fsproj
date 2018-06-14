@@ -5,16 +5,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Errors.fs" />
+    <Compile Include="Category.fs" />
+    <Compile Include="Designation.fs" />
+    <Compile Include="FieldType.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="File.fs" />
     <Compile Include="ResultModule.fs" />
     <Compile Include="BinaryParser.fs" />
     <Compile Include="OPData.fs" />
     <Compile Include="Profile.fs" />
-    <Compile Include="Category.fs" />
-    <Compile Include="Designation.fs" />
-    <Compile Include="FieldType.fs" />
-    <Compile Include="Item.fs" />
+    <Compile Include="Overview.fs" />
+    <Compile Include="BandFile.fs" />
+    <Compile Include="Vault.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

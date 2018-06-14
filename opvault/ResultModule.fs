@@ -5,6 +5,17 @@ open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Result = 
   open FSharp.Core
+
+  let combine (a: Result<'a list, 'e>) (b: Result<'a, 'e>): Result<'a list, 'e> =
+    match a, b with
+    | Error a, _ -> Error a
+    | _, Error b -> Error b
+    | Ok a, Ok b -> List.append a [ b ] |> Ok
+
+  let fold (a: Result<'a, 'e> list): Result<'a list, 'e> =
+    a |> List.fold combine (Ok [])
+
+
   type ResultBuilder() = 
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used
     // see also: https://fsharpforfunandprofit.com/posts/computation-expressions-builder-part1/
@@ -45,6 +56,24 @@ module Result =
       | Error err, _ -> Error err
       | _, Error err -> Error err
       | Ok a1, Ok b2 -> Ok(a1, b2)
+    
+    member __.Combine(a : Result<'a, 'e>, b : Result<'a, 'e>) : Result<'a list, 'e> = 
+      match a, b with
+      | Error err, _ -> Error err
+      | _, Error err -> Error err
+      | Ok a1, Ok b2 -> Ok [a1; b2]
+    
+    member __.Combine(a : Result<'a list, 'e>, b : Result<'a, 'e>) : Result<'a list, 'e> = 
+      match a, b with
+      | Error err, _ -> Error err
+      | _, Error err -> Error err
+      | Ok a, Ok b -> Ok (List.append a [ b ])
+    
+    member __.Combine(a : Result<'a, 'e>, b : Result<'a list, 'e>) : Result<'a list, 'e> = 
+      match a, b with
+      | Error err, _ -> Error err
+      | _, Error err -> Error err
+      | Ok a, Ok b -> Ok (a :: b)
     
     member __.Combine(a : Result<unit, 'e>, b : Result<'b, 'e>) : Result<'b, 'e> = 
       match a, b with

@@ -75,6 +75,11 @@ module Profile =
           CreatedAt = json.CreatedAt |> DateTime.fromUnixTimeStamp } 
     }
 
+  let getDecryptedProfileData profile =
+    match profile with
+    | DecryptedProfile profileData -> Ok profileData
+    | _ -> profileError ProfileIsEncrypted
+    
   let getDecryptedOverviewKey profile =
     match profile with
     | EncryptedProfile _ -> profileError ProfileIsEncrypted

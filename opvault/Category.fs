@@ -21,27 +21,29 @@ type Category =
   | Email
 
 module Category =
-  let fromCode (code: string) : Category option =
+  open Errors
+
+  let fromCode (code: string) =
     match code with
-    | "001" -> Some Login
-    | "002" -> Some CreditCard
-    | "003" -> Some SecureNote
-    | "004" -> Some Identity
-    | "005" -> Some Password
-    | "099" -> Some TombStone
-    | "100" -> Some SoftwareLicense
-    | "101" -> Some BankAccount
-    | "102" -> Some Database
-    | "103" -> Some DriverLicense
-    | "104" -> Some OutdoorLicense
-    | "105" -> Some Membership
-    | "106" -> Some Passport
-    | "107" -> Some Rewards
-    | "108" -> Some SSN
-    | "109" -> Some Router
-    | "110" -> Some Server
-    | "111" -> Some Email 
-    | _ -> None
+    | "001" -> Ok Login
+    | "002" -> Ok CreditCard
+    | "003" -> Ok SecureNote
+    | "004" -> Ok Identity
+    | "005" -> Ok Password
+    | "099" -> Ok TombStone
+    | "100" -> Ok SoftwareLicense
+    | "101" -> Ok BankAccount
+    | "102" -> Ok Database
+    | "103" -> Ok DriverLicense
+    | "104" -> Ok OutdoorLicense
+    | "105" -> Ok Membership
+    | "106" -> Ok Passport
+    | "107" -> Ok Rewards
+    | "108" -> Ok SSN
+    | "109" -> Ok Router
+    | "110" -> Ok Server
+    | "111" -> Ok Email 
+    | code -> UnknownCategory code |> BandFileError |> Error
 
   let toCode (category: Category) : string =
     match category with

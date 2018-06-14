@@ -24,7 +24,8 @@ module Errors =
 
   type BandFileError =
     | InvalidBandFileFormat
-
+    | UnknownCategory of string
+    
   type OPVaultError =
     | FileError of FileError
     | ProfileError of ProfileError
