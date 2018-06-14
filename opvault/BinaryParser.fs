@@ -2,19 +2,20 @@ namespace OPVault
 
 module BinaryParser =
   open System.IO
-
-  type ParseResult<'a> = Result<'a * BinaryReader, int64 * string>
+  open Errors
 
   type BinParser<'a> =
-    | BinParser of (BinaryReader -> ParseResult<'a>)   
+    | BinParser of (BinaryReader -> Result<'a * BinaryReader, OPVaultError>)
     
     with member this.Function = match this with BinParser pFunc -> pFunc                 
 
-  let IOExceptionHandlingWrapper(f:BinaryReader -> ParseResult<'a>) =
+  let private parserError (binaryReader: BinaryReader) message = (binaryReader.BaseStream.Position, message) |> ParserError |> Error
+
+  let IOExceptionHandlingWrapper(f:BinaryReader -> Result<'a * BinaryReader, OPVaultError>) =
     fun i -> try 
                f(i)
              with
-               (e & :? IOException ) -> Error (i.BaseStream.Position, e.Message)
+               (e & :? IOException ) -> parserError i e.Message
 
       
   let Take count = BinParser(IOExceptionHandlingWrapper(fun (i:BinaryReader) -> Ok (i.ReadBytes(count), i)))
@@ -32,10 +33,10 @@ module BinaryParser =
           try
             match i.PeekChar () with
             | v when v < 0 -> Ok ((), i)
-            | v -> Error (i.BaseStream.Position, (sprintf "Should be EOF but was %i!" v))
+            | v -> parserError i  (sprintf "Should be EOF but was %i!" v)
           with 
           | :? System.IO.IOException -> Ok ((), i)
-          | e -> Error (i.BaseStream.Position, e.Message))) 
+          | e -> parserError i e.Message)) 
 
   let AByte (b: byte) =
     BinParser(
@@ -44,7 +45,7 @@ module BinaryParser =
           let rB = i.ReadByte() in
             if (rB = b) 
             then Ok (rB, i)
-            else Error (i.BaseStream.Position, (sprintf "Expecting %A got %A" b rB))))
+            else parserError i (sprintf "Expecting %A got %A" b rB)))
 
   let ATag (value: string) = 
     BinParser(
@@ -53,9 +54,9 @@ module BinaryParser =
           let tag = i.ReadBytes (value |> String.length) |> Array.map char |> Array.fold (sprintf "%s%c") "" in
             if (value = tag)
             then Ok (tag, i)
-            else Error (i.BaseStream.Position, (sprintf "Expecting %s got %s" value tag))))
+            else parserError i (sprintf "Expecting %s got %s" value tag)))
 
-  let ParsingStep (func:'a -> BinParser<'b>) (accumulatedResult:ParseResult<'b list>) currentSeqItem =
+  let ParsingStep (func:'a -> BinParser<'b>) (accumulatedResult:Result<'b list * BinaryReader, OPVaultError>) currentSeqItem =
     match accumulatedResult with
     | Ok (result, inp) ->
         match ((func currentSeqItem).Function inp) with
