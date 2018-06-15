@@ -19,7 +19,9 @@ module Errors =
 
   type OPDataError =
     | CouldNotAuthenticate
+    | CouldNotDecrypt
     | EmptyCipherText
+    | InvalidCipherText
     | OPDataIsNotDecrypted
 
   type BandFileError =

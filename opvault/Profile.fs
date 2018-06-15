@@ -93,8 +93,7 @@ module Profile =
   let private decryptKey getEncryptedKeyData (derivedKeys: KeyPair) (encryptedProfileData: EncryptedProfileData) = 
     trial {
       let! encryptedKeyData = encryptedProfileData |> getEncryptedKeyData |> OPData.parseBytes
-      let! decryptedKeyData = derivedKeys.Decrypt encryptedKeyData
-      return! decryptedKeyData |> OPData.getDecryptedKeys
+      return! encryptedKeyData.DecryptKeys derivedKeys
     }
 
   let private decryptMasterKey = decryptKey (fun p -> p.MasterKey)

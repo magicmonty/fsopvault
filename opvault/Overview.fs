@@ -48,7 +48,7 @@ module Overview =
     trial {
       let! encryptedOverviewData = encryptedData |> OPData.parseBytes
       let! decryptedOverviewData = encryptedOverviewData |> OPData.authenticateAndDecrypt overviewKey
-      let! plainText = decryptedOverviewData |> OPData.getPlainText
+      let! plainText = decryptedOverviewData.PlainTextAsString ()
       return! parseJSON plainText
     }
 

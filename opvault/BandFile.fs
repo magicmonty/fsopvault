@@ -1,7 +1,19 @@
 namespace OPVault
 
+open System
+
 type BandFileItem = { Overview: Overview
-                      Category: Category }
+                      Category: Category
+                      Created: DateTime
+                      Data: byte array
+                      FavoriteOrder: int option
+                      FolderId: string option
+                      HMAC: byte array
+                      EncryptedKeys: byte array
+                      IsTrashed: bool
+                      TransactionTimeStamp: DateTime option
+                      Updated: DateTime option
+                      UUID: string }
 
 type BandFile = { Filename: string
                   Items: BandFileItem list }
@@ -28,12 +40,29 @@ module BandFile =
     | e -> JSONParserError e.Message |> ParserError |> Error
 
   let private parseBandItem (overviewKey: KeyPair) (prop: JsonValue) =
+    let asInteger (v: JsonValue) = v.AsInteger()
+    let asString (v: JsonValue) = v.AsString()
+    let asByteArray (v: JsonValue) = v |> asString |> ByteArray.fromBase64
+    let asDateTime (v: JsonValue) = v |> asInteger |> DateTime.fromUnixTimeStamp
+
     trial {
-      let! overview = prop?o.AsString() |> Overview.decryptString overviewKey
-      let! category = prop?category.AsString() |> Category.fromCode
+      let! overview = prop?o |> asString |> Overview.decryptString overviewKey
+      let! category = prop?category |> asString |> Category.fromCode
 
       return { Overview = overview
-               Category = category }
+               Category = category
+               Created = prop?created |> asDateTime
+               Data = prop?d |> asByteArray
+               FavoriteOrder = prop.TryGetProperty("fave") |> Option.map asInteger
+               FolderId = prop.TryGetProperty("folder")  |> Option.map asString
+               HMAC = prop?hmac |> asByteArray
+               EncryptedKeys = prop?k |> asByteArray
+               IsTrashed = match prop.TryGetProperty("trashed") with
+                           | Some v -> v.AsBoolean()
+                           | None -> false
+               TransactionTimeStamp = prop.TryGetProperty("tx") |> Option.map asDateTime
+               Updated = prop.TryGetProperty("updated") |> Option.map asDateTime
+               UUID = prop?uuid |> asString }
     }
 
   let readBandFile (profile: DecryptedProfileData) bandfilename = 
