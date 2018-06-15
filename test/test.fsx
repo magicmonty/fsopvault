@@ -1,26 +1,26 @@
 #load @"../.paket/load/netstandard2.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.fsx"
 #load @"../.paket/load/netstandard2.0/FSharp.Data.fsx"
 
-#load "Errors.fs"
-#load "Crypto.fs"
-#load "Helpers.fs"
-#load "File.fs"
-#load "ResultModule.fs"
-#load "BinaryParser.fs"
-#load "OPData.fs"
-#load "Profile.fs"
-#load "Overview.fs"
-#load "Category.fs"
-#load "BandFile.fs"
-#load "Folder.fs"
-#load "Vault.fs"
+#load "../src/Pagansoft.OPVault/Errors.fs"
+#load "../src/Pagansoft.OPVault/Crypto.fs"
+#load "../src/Pagansoft.OPVault/Helpers.fs"
+#load "../src/Pagansoft.OPVault/File.fs"
+#load "../src/Pagansoft.OPVault/ResultModule.fs"
+#load "../src/Pagansoft.OPVault/BinaryParser.fs"
+#load "../src/Pagansoft.OPVault/OPData.fs"
+#load "../src/Pagansoft.OPVault/Profile.fs"
+#load "../src/Pagansoft.OPVault/Overview.fs"
+#load "../src/Pagansoft.OPVault/Category.fs"
+#load "../src/Pagansoft.OPVault/BandFile.fs"
+#load "../src/Pagansoft.OPVault/Folder.fs"
+#load "../src/Pagansoft.OPVault/Vault.fs"
 
-open OPVault
+open Pagansoft.OPVault
 open FSharp.Results
-open Result
+open FSharp.Results.Results
 
 let password = "freddy"
-let vault = { VaultDir = "testdata\\onepassword_data\\default" }
+let vault = { VaultDir = "test/testdata/onepassword_data/default" }
 let unlockedVault = vault.Unlock password
 
 trial {
@@ -32,5 +32,4 @@ trial {
     |> Result.fold
 
   return items |> List.map (fun f -> match f with BandFileItemData d -> d)
-}
-
+} |> Result.defaultValue []

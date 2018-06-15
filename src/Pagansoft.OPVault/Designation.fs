@@ -1,4 +1,4 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 type Designation =
   | NoDesignation

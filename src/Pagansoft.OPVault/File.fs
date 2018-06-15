@@ -1,8 +1,7 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 [<RequireQualifiedAccess>]
 module File =
-  open Errors
   
   let read filename = 
     try

@@ -1,6 +1,6 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
-open FSharp.Results.Result
+open FSharp.Results.Results
 
 type LockedVault = { VaultDir: string }
 

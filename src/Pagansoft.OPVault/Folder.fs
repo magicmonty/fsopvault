@@ -1,4 +1,4 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 open System
 
@@ -10,11 +10,10 @@ type Folder = { UUID: string
                 IsSmartFolder: bool }
 
 module Folder =
-  open Errors
   open FSharp.Data
   open FSharp.Data.JsonExtensions
   open FSharp.Results
-  open Result
+  open FSharp.Results.Results
 
   type private FolderFileJson = FSharp.Data.JsonProvider<"""{"FOO":{"created":0,"overview":"FOO","tx":1373753421,"updated":0,"uuid":"FOO"},"BAR":{"created":1373754128,"overview":"BAZ","smart":true,"tx":1373754523,"updated":1373754134,"uuid":"BAZ"}}""">
   

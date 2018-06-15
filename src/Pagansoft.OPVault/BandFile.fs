@@ -1,9 +1,8 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 open System
-open Errors
 open FSharp.Results
-open Result
+open FSharp.Results.Results
 
 type BandFileItemData = BandFileItemData of string
 

@@ -1,6 +1,4 @@
-namespace OPVault
-
-open Errors
+namespace Pagansoft.OPVault
 
 type EncryptedProfileData = { LastUpdatedBy: string option
                               UpdatedAt: System.DateTime option
@@ -30,7 +28,7 @@ type Profile =
 module Profile =
   open System
   open FSharp.Data
-  open FSharp.Results.Result
+  open FSharp.Results.Results
 
   let empty = 
     { LastUpdatedBy = None

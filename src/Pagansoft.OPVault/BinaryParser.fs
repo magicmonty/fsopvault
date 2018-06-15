@@ -1,8 +1,7 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 module BinaryParser =
   open System.IO
-  open Errors
 
   type BinParser<'a> =
     | BinParser of (BinaryReader -> Result<'a * BinaryReader, OPVaultError>)

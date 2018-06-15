@@ -1,8 +1,7 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 [<RequireQualifiedAccess>]
 module String =
-  open Errors
   let trim (str: string) = str.Trim()
   
   let removeWhitespace (str: string) =
@@ -35,6 +34,8 @@ module DateTime =
 [<RequireQualifiedAccess>]
 module JSON =
   open FSharp.Data
+  open FSharp.Data.JsonExtensions
+
   let asInteger (v: JsonValue) = v.AsInteger()
   let asBool (v: JsonValue) = v.AsBoolean()
   let asString (v: JsonValue) = v.AsString()

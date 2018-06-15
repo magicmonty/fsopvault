@@ -1,10 +1,9 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
-open System.Security.Cryptography
-open System.IO
 open System
-open Errors
-open FSharp.Results.Result
+open System.IO
+open System.Security.Cryptography
+open FSharp.Results.Results
 
 type EncryptedOPData = { PlainTextSize: uint64
                          PaddingSize: uint64

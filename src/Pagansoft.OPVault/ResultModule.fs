@@ -1,11 +1,7 @@
 namespace FSharp.Results
 
-open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
-
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module Result = 
-  open FSharp.Core
-
+[<RequireQualifiedAccess>]
+module Result =
   let combine (a: Result<'a list, 'e>) (b: Result<'a, 'e>): Result<'a list, 'e> =
     match a, b with
     | Error a, _ -> Error a
@@ -20,6 +16,10 @@ module Result =
     | Ok a -> a
     | _ -> defaultValue
 
+
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Results = 
+  open FSharp.Core
 
   type ResultBuilder() = 
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used

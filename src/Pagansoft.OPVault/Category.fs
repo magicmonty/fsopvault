@@ -1,4 +1,4 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 type Category =
   | Login
@@ -21,7 +21,6 @@ type Category =
   | Email
 
 module Category =
-  open Errors
 
   let fromCode (code: string) =
     match code with

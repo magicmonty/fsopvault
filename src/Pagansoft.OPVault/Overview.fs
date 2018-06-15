@@ -1,4 +1,4 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
 type Overview = { Title: string option
                   Info: string option
@@ -8,8 +8,7 @@ type Overview = { Title: string option
 
 [<RequireQualifiedAccess>]
 module Overview =
-  open Errors
-  open FSharp.Results.Result
+  open FSharp.Results.Results
 
   type private OverviewJSON = FSharp.Data.JsonProvider<""" 
     [

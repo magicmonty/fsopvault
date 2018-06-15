@@ -1,5 +1,4 @@
-namespace OPVault
-
+namespace Pagansoft.OPVault
 
 [<RequireQualifiedAccess>]
 module Crypto =

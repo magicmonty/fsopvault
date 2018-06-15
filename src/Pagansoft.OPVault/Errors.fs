@@ -1,5 +1,6 @@
-namespace OPVault
+namespace Pagansoft.OPVault
 
+[<AutoOpen>]
 module Errors =
   type FileError =
     | FileNotFound of string
