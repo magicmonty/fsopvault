@@ -15,6 +15,11 @@ module Result =
   let fold (a: Result<'a, 'e> list): Result<'a list, 'e> =
     a |> List.fold combine (Ok [])
 
+  let defaultValue (defaultValue: 'a) (a: Result<'a, 'e>) =
+    match a with
+    | Ok a -> a
+    | _ -> defaultValue
+
 
   type ResultBuilder() = 
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used

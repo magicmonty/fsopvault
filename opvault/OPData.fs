@@ -52,7 +52,7 @@ and OPData =
  
   member this.PlainTextAsString() =
     match this with
-    | Decrypted data -> Ok (System.Text.Encoding.UTF8.GetString data.PlainText )
+    | Decrypted data -> data.PlainText |> String.bytesAsString |> Ok
     | Encrypted _ -> OPDataIsNotDecrypted |> OPDataError |> Error
 
   member this.Decrypt (keys: KeyPair) =
@@ -118,6 +118,30 @@ and KeyPair = { EncryptionKey: byte array
                     with
                     | _ -> CouldNotDecrypt |> OPDataError |> Error
                   | _ -> InvalidCipherText |> OPDataError |> Error
+                
+                member this.DecryptByteArray (bytes: byte array) =
+                  match bytes with
+                  | [||] -> EmptyCipherText |> OPDataError |> Error
+                  | _ ->
+                    try
+                      let l = bytes |> Array.length
+                      let iv = bytes.[0..15]
+                      let hmac = bytes.[(l - 32) .. ]
+                      let cipherText = bytes.[16..(l - 32 - 1)]
+                      let calculatedHMAC = this.Hmac (bytes.[0..(l - 32 - 1)])
+                      if hmac <> calculatedHMAC
+                      then CouldNotAuthenticate |> OPDataError |> Error
+                      else
+                        use decryptor = this.Cipher iv
+                        use msDecrypt = new MemoryStream(cipherText)
+                        use csDecrypt = new CryptoStream(msDecrypt, decryptor.CreateDecryptor(), CryptoStreamMode.Read)
+                        let cipherLength = cipherText |> Array.length
+                        let padding = 16 - (cipherLength % 16)
+                        let mutable plaintext = [| for _ in 1 .. cipherLength -> 0uy |]
+                        csDecrypt.Read(plaintext, 0, int cipherLength) |> ignore
+                        plaintext |> Array.skip padding |> Ok
+                    with
+                    | _ -> CouldNotDecrypt |> OPDataError |> Error
                 
 [<RequireQualifiedAccess>]
 module KeyPair =

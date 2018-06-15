@@ -11,11 +11,25 @@
 #load "Overview.fs"
 #load "Category.fs"
 #load "BandFile.fs"
+#load "Folder.fs"
 #load "Vault.fs"
 
 open OPVault
+open FSharp.Results
+open FSharp.Results.Result
 
 let password = "freddy"
-
 let vault = { VaultDir = "testdata\\onepassword_data\\default" }
-let unlocked = vault.Unlock password
+let unlockedVault = vault.Unlock password
+
+let folder =
+  trial {
+    let! unlocked = unlockedVault
+    let! items = Folder.read unlocked.Profile unlocked.VaultDir
+    return 
+      items 
+      |> List.last 
+      |> fun i -> i.Overview
+  } |> Result.defaultValue ""
+
+folder

@@ -23,7 +23,8 @@ module BandFile =
   open Errors
   open FSharp.Data
   open FSharp.Data.JsonExtensions
-  open FSharp.Results.Result
+  open FSharp.Results
+  open Result
   
   type BandFileJson = FSharp.Data.JsonProvider<"""{"FOO":{"uuid":"FOO","category":"099","o":"FOO","hmac":"FOO","updated":1386214150,"trashed":true,"k":"FOO","d":"FOO","created":1386214097,"tx":1386214431},"BAR":{"category":"004","k":"BAR","updated":1325483949,"tx":1373753421,"d":"BAR","hmac":"BAR","created":1325483949,"uuid":"BAR","o":"BAR"}}""">
 
@@ -40,29 +41,22 @@ module BandFile =
     | e -> JSONParserError e.Message |> ParserError |> Error
 
   let private parseBandItem (overviewKey: KeyPair) (prop: JsonValue) =
-    let asInteger (v: JsonValue) = v.AsInteger()
-    let asString (v: JsonValue) = v.AsString()
-    let asByteArray (v: JsonValue) = v |> asString |> ByteArray.fromBase64
-    let asDateTime (v: JsonValue) = v |> asInteger |> DateTime.fromUnixTimeStamp
-
     trial {
-      let! overview = prop?o |> asString |> Overview.decryptString overviewKey
-      let! category = prop?category |> asString |> Category.fromCode
+      let! overview = prop?o |> JSON.asString |> Overview.decryptString overviewKey
+      let! category = prop?category |> JSON.asString |> Category.fromCode
 
       return { Overview = overview
                Category = category
-               Created = prop?created |> asDateTime
-               Data = prop?d |> asByteArray
-               FavoriteOrder = prop.TryGetProperty("fave") |> Option.map asInteger
-               FolderId = prop.TryGetProperty("folder")  |> Option.map asString
-               HMAC = prop?hmac |> asByteArray
-               EncryptedKeys = prop?k |> asByteArray
-               IsTrashed = match prop.TryGetProperty("trashed") with
-                           | Some v -> v.AsBoolean()
-                           | None -> false
-               TransactionTimeStamp = prop.TryGetProperty("tx") |> Option.map asDateTime
-               Updated = prop.TryGetProperty("updated") |> Option.map asDateTime
-               UUID = prop?uuid |> asString }
+               Created = prop?created |> JSON.asDateTime
+               Data = prop?d |> JSON.asByteArray
+               FavoriteOrder = prop.TryGetProperty("fave") |> Option.map JSON.asInteger
+               FolderId = prop.TryGetProperty("folder")  |> Option.map JSON.asString
+               HMAC = prop?hmac |> JSON.asByteArray
+               EncryptedKeys = prop?k |> JSON.asByteArray
+               IsTrashed = prop.TryGetProperty("trashed") |> Option.map JSON.asBool |> Option.defaultValue false
+               TransactionTimeStamp = prop.TryGetProperty("tx") |> Option.map JSON.asDateTime
+               Updated = prop.TryGetProperty("updated") |> Option.map JSON.asDateTime
+               UUID = prop?uuid |> JSON.asString }
     }
 
   let readBandFile (profile: DecryptedProfileData) bandfilename = 
@@ -77,7 +71,7 @@ module BandFile =
                           | Ok item -> Ok item
                           | Error e -> Error e ] 
 
-          return! items |> List.fold FSharp.Results.Result.combine (Ok [])
+          return! items |> Result.fold
         } 
       | Error e ->
         match e with

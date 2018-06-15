@@ -3,6 +3,8 @@ namespace OPVault
 [<RequireQualifiedAccess>]
 module String =
   open Errors
+  let trim (str: string) = str.Trim()
+  
   let removeWhitespace (str: string) =
     str.Replace("\r\n","").Replace("\r","").Replace("\n","").Replace(" ", "").Replace("\t","").Trim()
 
@@ -16,6 +18,9 @@ module String =
       Ok json
     else WrongFormatError |> ParserError |> Error
 
+  let bytesAsString (bytes: byte array) : string =
+    System.Text.Encoding.UTF8.GetString bytes
+
 [<RequireQualifiedAccess>]
 module ByteArray =
   let fromBase64 (str: string) =
@@ -27,3 +32,11 @@ module DateTime =
     let dtDateTime = System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
     (dtDateTime.AddSeconds (float value)).ToLocalTime()
 
+[<RequireQualifiedAccess>]
+module JSON =
+  open FSharp.Data
+  let asInteger (v: JsonValue) = v.AsInteger()
+  let asBool (v: JsonValue) = v.AsBoolean()
+  let asString (v: JsonValue) = v.AsString()
+  let asByteArray (v: JsonValue) = v |> asString |> ByteArray.fromBase64
+  let asDateTime (v: JsonValue) = v |> asInteger |> DateTime.fromUnixTimeStamp
