@@ -80,7 +80,7 @@ and KeyPair = { EncryptionKey: byte array
                  
                 member this.Cipher iv =
                     let d = System.Security.Cryptography.Aes.Create()
-                    d.KeySize <- 256
+                    d.KeySize <- Crypto.KeySizeInBits
                     d.Mode <- CipherMode.CBC
                     d.IV <- iv
                     d.Key <- this.EncryptionKey
@@ -92,8 +92,34 @@ and KeyPair = { EncryptionKey: byte array
                     use h = new SHA512Managed()
                     h.ComputeHash plainTextBytes
                     
-                  { EncryptionKey = hash |> Array.take 32
-                    AuthenticationKey = hash |> Array.skip 32 }
+                  { EncryptionKey = hash |> Array.take Crypto.KeySizeInBytes
+                    AuthenticationKey = hash |> Array.skip Crypto.KeySizeInBytes }
+                
+                member this.DecryptByteArray hasNoPadding (bytes: byte array) =
+                  match bytes with
+                  | [||] -> EmptyCipherText |> OPDataError |> Error
+                  | _ ->
+                    try
+                      let l = bytes |> Array.length
+                      let iv = bytes.[0 .. (Crypto.IVSizeInBytes - 1)]
+                      let hmac = bytes.[(l - Crypto.HMACSizeInBytes) .. ]
+                      let cipherText = bytes.[Crypto.IVSizeInBytes .. (l - Crypto.HMACSizeInBytes - 1)]
+                      let calculatedHMAC = this.Hmac (bytes.[0..(l - Crypto.HMACSizeInBytes - 1)])
+                      if hmac <> calculatedHMAC
+                      then CouldNotAuthenticate |> OPDataError |> Error
+                      else
+                        use decryptor = this.Cipher iv
+                        use msDecrypt = new MemoryStream(cipherText)
+                        use csDecrypt = new CryptoStream(msDecrypt, decryptor.CreateDecryptor(), CryptoStreamMode.Read)
+                        let cipherLength = cipherText |> Array.length
+                        let padding = match hasNoPadding, Crypto.calcPaddingSize cipherLength with
+                                      | true, p when p = Crypto.PaddedBlockSize -> 0
+                                      | _, p -> p
+                        let mutable plaintext = Crypto.initArrayOfLength cipherLength
+                        csDecrypt.Read(plaintext, 0, cipherLength) |> ignore
+                        plaintext |> Array.skip padding |> Ok
+                    with
+                    | _ -> CouldNotDecrypt |> OPDataError |> Error
 
                 member this.DecryptToByteArray data =
                   let isValidCipherText cipherText =
@@ -103,14 +129,14 @@ and KeyPair = { EncryptionKey: byte array
 
                   match data.CipherText with
                   | [||] -> EmptyCipherText |> OPDataError |> Error
-                  | cipherText when cipherText |> isValidCipherText ->
+                  | cipherText when cipherText |> isValidCipherText -> 
                     try
                       use decryptor = this.Cipher data.IV                  
                       use msDecrypt = new MemoryStream(cipherText)
                       use csDecrypt = new CryptoStream(msDecrypt, decryptor.CreateDecryptor(), CryptoStreamMode.Read)
 
                       let cipherLength = cipherText |> Array.length
-                      let mutable plaintext = [| for _ in 1 .. cipherLength -> 0uy |]
+                      let mutable plaintext = Crypto.initArrayOfLength cipherLength
                       csDecrypt.Read(plaintext, 0, int cipherLength) |> ignore
                       
                       let plaintext = plaintext |> Array.skip (int data.PaddingSize)
@@ -118,30 +144,6 @@ and KeyPair = { EncryptionKey: byte array
                     with
                     | _ -> CouldNotDecrypt |> OPDataError |> Error
                   | _ -> InvalidCipherText |> OPDataError |> Error
-                
-                member this.DecryptByteArray (bytes: byte array) =
-                  match bytes with
-                  | [||] -> EmptyCipherText |> OPDataError |> Error
-                  | _ ->
-                    try
-                      let l = bytes |> Array.length
-                      let iv = bytes.[0..15]
-                      let hmac = bytes.[(l - 32) .. ]
-                      let cipherText = bytes.[16..(l - 32 - 1)]
-                      let calculatedHMAC = this.Hmac (bytes.[0..(l - 32 - 1)])
-                      if hmac <> calculatedHMAC
-                      then CouldNotAuthenticate |> OPDataError |> Error
-                      else
-                        use decryptor = this.Cipher iv
-                        use msDecrypt = new MemoryStream(cipherText)
-                        use csDecrypt = new CryptoStream(msDecrypt, decryptor.CreateDecryptor(), CryptoStreamMode.Read)
-                        let cipherLength = cipherText |> Array.length
-                        let padding = 16 - (cipherLength % 16)
-                        let mutable plaintext = [| for _ in 1 .. cipherLength -> 0uy |]
-                        csDecrypt.Read(plaintext, 0, int cipherLength) |> ignore
-                        plaintext |> Array.skip padding |> Ok
-                    with
-                    | _ -> CouldNotDecrypt |> OPDataError |> Error
                 
 [<RequireQualifiedAccess>]
 module KeyPair =
@@ -151,12 +153,10 @@ module KeyPair =
   let empty = { EncryptionKey = [||]
                 AuthenticationKey = [||] }
 
-  let private KeySize = 256 / 8 // 256 bits
-
   let private parse binaryReader =
     let parser = parseBinary {
-      let! enc = Take KeySize
-      let! auth = Take KeySize
+      let! enc = Take Crypto.KeySizeInBytes
+      let! auth = Take Crypto.KeySizeInBytes
       return { EncryptionKey = enc
                AuthenticationKey = auth }
     }
@@ -171,7 +171,7 @@ module KeyPair =
     parse reader
 
   let deriveFromMasterPassword (password: string) salt iterations =
-    KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, iterations, KeySize * 2) |> parseBytes
+    KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, iterations, Crypto.KeySizeInBytes * 2) |> parseBytes
 
 [<RequireQualifiedAccess>]
 module OPData =
@@ -182,10 +182,10 @@ module OPData =
       let parser = parseBinary {
         let! _ = ATag "opdata01"
         let! plainTextSize = RUnsignedLong
-        let paddingSize = 16UL - (plainTextSize % 16UL)
-        let! iv = Take 16
+        let paddingSize = (Crypto.calcPaddingSize (int plainTextSize)) |> uint64
+        let! iv = Take Crypto.IVSizeInBytes
         let! cipherText = Take (paddingSize + plainTextSize |> int)
-        let! hmac = Take (256 / 8)
+        let! hmac = Take Crypto.HMACSizeInBytes
         let! _ = EOF
 
         return Encrypted { PlainTextSize = plainTextSize

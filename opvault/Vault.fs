@@ -15,15 +15,18 @@ type LockedVault = { VaultDir: string }
                               let filename = sprintf "%s\\band_%s.js" this.VaultDir bandNumber
                               filename |> BandFile.readBandFile profileData ] 
                           |> FSharp.Results.Result.fold
+                        let! folders = Folder.read profileData this.VaultDir 
   
                         return { VaultDir = this.VaultDir
                                  Profile = profileData
-                                 BandFiles = bandFiles }
+                                 BandFiles = bandFiles
+                                 Folders = folders }
                       }
                       
 and UnlockedVault = { VaultDir: string
                       Profile: DecryptedProfileData
-                      BandFiles: BandFile list }
+                      BandFiles: BandFile list
+                      Folders: Folder list }
                     
                     member this.Lock () =
                       { VaultDir = this.VaultDir }

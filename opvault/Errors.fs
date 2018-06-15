@@ -20,6 +20,8 @@ module Errors =
   type OPDataError =
     | CouldNotAuthenticate
     | CouldNotDecrypt
+    | CouldNotDecryptItem
+    | CouldNotDecryptItemKey
     | EmptyCipherText
     | InvalidCipherText
     | OPDataIsNotDecrypted

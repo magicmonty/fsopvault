@@ -1,7 +1,6 @@
 namespace OPVault
 
 open System
-open FSharp.Results.Result
 
 type Folder = { UUID: string
                 Overview: string
@@ -21,7 +20,7 @@ module Folder =
   
   let parseFolderItem (overviewKey: KeyPair) (prop: JsonValue) =
     trial {
-      let! overview = prop?overview |> JSON.asByteArray |> overviewKey.DecryptByteArray
+      let! overview = prop?overview |> JSON.asByteArray |> overviewKey.DecryptByteArray false
       
       return { UUID = prop?uuid |> JSON.asString
                Overview = overview |> Array.skipWhile (fun b -> b = 0uy) |> String.bytesAsString

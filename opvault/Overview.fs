@@ -2,7 +2,7 @@ namespace OPVault
 
 type Overview = { Title: string option
                   Info: string option
-                  PS: int
+                  PS: int option
                   Tags: string list
                   Urls: string list }
 
@@ -15,6 +15,7 @@ module Overview =
     [
       {"ps":0},
       {"title":"Title","ps":0,"ainfo":"ainfo"},
+      {"title":"Title","ainfo":"ainfo"},
       {"title":"Title","ainfo":"ainfo","ps":0},
       {"title":"Title","ainfo":"","tags":["Tag1"],"ps":0},
       {"title":"Title","ainfo":"ainfo","tags":["Tag1"],"ps":0},

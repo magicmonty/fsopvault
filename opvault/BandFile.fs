@@ -1,6 +1,11 @@
 namespace OPVault
 
 open System
+open Errors
+open FSharp.Results
+open Result
+
+type BandFileItemData = BandFileItemData of string
 
 type BandFileItem = { Overview: Overview
                       Category: Category
@@ -15,16 +20,36 @@ type BandFileItem = { Overview: Overview
                       Updated: DateTime option
                       UUID: string }
 
+                    member this.Decrypt (masterKeys: KeyPair) : Result<BandFileItemData, OPVaultError> =
+                      let checkKeyData keyData =
+                        let calculated = (2 * Crypto.KeySizeInBytes) + Crypto.HMACSizeInBytes + Crypto.IVSizeInBytes
+                        let actual = keyData |> Array.length
+                        if actual <> calculated
+                        then CouldNotDecryptItemKey |> OPDataError |> Error
+                        else Ok ()
+
+                      trial {
+                        do! checkKeyData this.EncryptedKeys
+                        let! keyData = masterKeys.DecryptByteArray true this.EncryptedKeys
+                        let itemKey = { EncryptionKey = keyData |> Array.take Crypto.KeySizeInBytes
+                                        AuthenticationKey = keyData |> Array.skip Crypto.KeySizeInBytes }
+
+                        let! itemData = this.Data |> OPData.parseBytes
+                        let! decryptedData = itemData.Decrypt itemKey
+
+                        return!
+                          match decryptedData with
+                          | Decrypted data ->  data.PlainText |> String.bytesAsString |> BandFileItemData |> Ok
+                          | Encrypted _ -> CouldNotDecryptItem |> OPDataError |> Error
+                      }
+
 type BandFile = { Filename: string
                   Items: BandFileItem list }
 
 [<RequireQualifiedAccess>]
 module BandFile =
-  open Errors
   open FSharp.Data
   open FSharp.Data.JsonExtensions
-  open FSharp.Results
-  open Result
   
   type BandFileJson = FSharp.Data.JsonProvider<"""{"FOO":{"uuid":"FOO","category":"099","o":"FOO","hmac":"FOO","updated":1386214150,"trashed":true,"k":"FOO","d":"FOO","created":1386214097,"tx":1386214431},"BAR":{"category":"004","k":"BAR","updated":1325483949,"tx":1373753421,"d":"BAR","hmac":"BAR","created":1325483949,"uuid":"BAR","o":"BAR"}}""">
 

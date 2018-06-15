@@ -2,6 +2,7 @@
 #load @"../.paket/load/netstandard2.0/FSharp.Data.fsx"
 
 #load "Errors.fs"
+#load "Crypto.fs"
 #load "Helpers.fs"
 #load "File.fs"
 #load "ResultModule.fs"
@@ -16,20 +17,20 @@
 
 open OPVault
 open FSharp.Results
-open FSharp.Results.Result
+open Result
 
 let password = "freddy"
 let vault = { VaultDir = "testdata\\onepassword_data\\default" }
 let unlockedVault = vault.Unlock password
 
-let folder =
-  trial {
-    let! unlocked = unlockedVault
-    let! items = Folder.read unlocked.Profile unlocked.VaultDir
-    return 
-      items 
-      |> List.last 
-      |> fun i -> i.Overview
-  } |> Result.defaultValue ""
+trial {
+  let! unlocked = unlockedVault
+  let! items =    
+    unlocked.BandFiles
+    |> List.collect (fun f -> f.Items)
+    |> List.map (fun f -> f.Decrypt unlocked.Profile.MasterKey)
+    |> Result.fold
 
-folder
+  return items |> List.map (fun f -> match f with BandFileItemData d -> d)
+}
+
