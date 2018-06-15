@@ -12,7 +12,7 @@ type LockedVault = { VaultDir: string }
                         let! bandFiles =
                           [ for i in 0 .. 15 -> 
                               let bandNumber = (sprintf "%x" i).ToUpper()
-                              let filename = sprintf "%s\\band_%s.js" this.VaultDir bandNumber
+                              let filename = sprintf "%s/band_%s.js" this.VaultDir bandNumber
                               filename |> BandFile.readBandFile profileData ] 
                           |> FSharp.Results.Result.fold
                         let! folders = Folder.read profileData this.VaultDir 
