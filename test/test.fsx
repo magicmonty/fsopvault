@@ -1,5 +1,5 @@
-#load @"../.paket/load/netstandard2.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.fsx"
-#load @"../.paket/load/netstandard2.0/FSharp.Data.fsx"
+#load @"../.paket/load/netcoreapp2.1/Microsoft.AspNetCore.Cryptography.KeyDerivation.fsx"
+#load @"../.paket/load/netcoreapp2.1/Chiron.fsx"
 
 #load "../src/Pagansoft.OPVault/Errors.fs"
 #load "../src/Pagansoft.OPVault/Crypto.fs"
@@ -18,6 +18,7 @@
 open Pagansoft.OPVault
 open FSharp.Results
 open FSharp.Results.Results
+open Chiron
 
 let password = "freddy"
 let vault = { VaultDir = "test/testdata/onepassword_data/default" }
@@ -27,7 +28,7 @@ trial {
   let! unlocked = unlockedVault
   let! items =    
     unlocked.BandFiles
-    |> List.collect (fun f -> f.Items)
+    |> List.collect (fun f -> f.Items |> Map.toList |> List.map snd) 
     |> List.map (fun f -> f.Decrypt unlocked.Profile.MasterKey)
     |> Result.fold
 

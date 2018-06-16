@@ -10,23 +10,43 @@ type Folder = { UUID: string
                 IsSmartFolder: bool }
 
 module Folder =
-  open FSharp.Data
-  open FSharp.Data.JsonExtensions
   open FSharp.Results
   open FSharp.Results.Results
+  open Chiron
 
-  type private FolderFileJson = FSharp.Data.JsonProvider<"""{"FOO":{"created":0,"overview":"FOO","tx":1373753421,"updated":0,"uuid":"FOO"},"BAR":{"created":1373754128,"overview":"BAZ","smart":true,"tx":1373754523,"updated":1373754134,"uuid":"BAZ"}}""">
-  
-  let parseFolderItem (overviewKey: KeyPair) (prop: JsonValue) =
+  type FolderDTO = { UUID: string
+                     Overview: string
+                     Created: int
+                     TransactionTimeStamp: int
+                     Updated: int
+                     IsSmartFolder: bool }
+                   
+                   static member FromJson (_ : FolderDTO) : Json<FolderDTO> =
+                    json {
+                      let! created = Json.read "created"
+                      let! overview = Json.read "overview"
+                      let! tx = Json.read "tx"
+                      let! updated = Json.read "updated"
+                      let! smart = Json.tryRead "smart"
+                      let! uuid = Json.read "uuid"
+                      return { UUID = uuid
+                               Overview = overview
+                               Created = created
+                               TransactionTimeStamp = tx
+                               Updated = updated
+                               IsSmartFolder = smart |> Option.defaultValue false }
+                    }
+
+  let parseFolderItem (overviewKey: KeyPair) (prop: FolderDTO) : Result<Folder, OPVaultError> =
     trial {
-      let! overview = prop?overview |> JSON.asByteArray |> overviewKey.DecryptByteArray false
+      let! overview = prop.Overview |> ByteArray.fromBase64 |> overviewKey.DecryptByteArray false
       
-      return { UUID = prop?uuid |> JSON.asString
+      return { UUID = prop.UUID
                Overview = overview |> Array.skipWhile (fun b -> b = 0uy) |> String.bytesAsString
-               Created = prop?created |> JSON.asDateTime
-               TransactionTimeStamp = prop?tx |> JSON.asDateTime
-               Updated = prop?updated |> JSON.asDateTime
-               IsSmartFolder = prop.TryGetProperty("smart") |> Option.map JSON.asBool |> Option.defaultValue false }
+               Created = prop.Created |> DateTime.fromUnixTimeStamp
+               TransactionTimeStamp = prop.TransactionTimeStamp |> DateTime.fromUnixTimeStamp
+               Updated = prop.Updated |> DateTime.fromUnixTimeStamp
+               IsSmartFolder = prop.IsSmartFolder }
     }
   
   let makeJSON content = 
@@ -35,11 +55,11 @@ module Folder =
 
     content |> String.makeJSON startMarker endMarker
 
-  let parseFolderFileJSON (json: string) =
+  let parseFolderFileJSON (json: string) : Result<Map<string, FolderDTO>, OPVaultError> =
     try
-      Ok (FolderFileJson.Parse json)
+      Json.parse json |> Json.deserialize |> Ok
     with
-    | e -> JSONParserError e.Message |> ParserError |> Error
+    | e -> JSONParserError e.Message |> ParserError |> Result.Error
 
   let read (profile: DecryptedProfileData) (vaultDir: string) =
     let filename = sprintf "%s/folders.js" vaultDir
@@ -47,15 +67,15 @@ module Folder =
     | Ok content ->
       trial {
         let! json = content |> makeJSON
-        let! json = json |> parseFolderFileJSON
-        let items = [ for prop in json.JsonValue.Properties ->
-                        match prop |> snd |> parseFolderItem profile.OverviewKey  with
-                        | Ok item -> Ok item
-                        | Error e -> Error e ] 
-
-        return! items |> Result.fold
+        let! items = json |> parseFolderFileJSON
+        return! items 
+                |> Map.toList
+                |> List.map (fun (key, item) -> match item |> parseFolderItem profile.OverviewKey with
+                                                | Ok item -> Ok (key, item)
+                                                | Result.Error e -> Result.Error e) 
+                |> Result.fold
       } 
-    | Error e ->
+    | Result.Error e ->
       match e with
       | FileError (FileNotFound _) -> Ok []
-      | _ -> Error e
+      | _ -> Result.Error e

@@ -24,7 +24,7 @@ type BandFileItem = { Overview: Overview
                         let calculated = (2 * Crypto.KeySizeInBytes) + Crypto.HMACSizeInBytes + Crypto.IVSizeInBytes
                         let actual = keyData |> Array.length
                         if actual <> calculated
-                        then CouldNotDecryptItemKey |> OPDataError |> Error
+                        then CouldNotDecryptItemKey |> OPDataError |> Result.Error
                         else Ok ()
 
                       trial {
@@ -39,49 +39,86 @@ type BandFileItem = { Overview: Overview
                         return!
                           match decryptedData with
                           | Decrypted data ->  data.PlainText |> String.bytesAsString |> BandFileItemData |> Ok
-                          | Encrypted _ -> CouldNotDecryptItem |> OPDataError |> Error
+                          | Encrypted _ -> CouldNotDecryptItem |> OPDataError |> Result.Error
                       }
 
 type BandFile = { Filename: string
-                  Items: BandFileItem list }
+                  Items: Map<string, BandFileItem> }
 
 [<RequireQualifiedAccess>]
 module BandFile =
-  open FSharp.Data
-  open FSharp.Data.JsonExtensions
+  open Chiron
   
-  type BandFileJson = FSharp.Data.JsonProvider<"""{"FOO":{"uuid":"FOO","category":"099","o":"FOO","hmac":"FOO","updated":1386214150,"trashed":true,"k":"FOO","d":"FOO","created":1386214097,"tx":1386214431},"BAR":{"category":"004","k":"BAR","updated":1325483949,"tx":1373753421,"d":"BAR","hmac":"BAR","created":1325483949,"uuid":"BAR","o":"BAR"}}""">
+  type BandFileItemDTO = { Overview: string
+                           Category: string
+                           Created: DateTime
+                           Data: byte array
+                           FavoriteOrder: int option
+                           FolderId: string option
+                           HMAC: byte array
+                           EncryptedKeys: byte array
+                           IsTrashed: bool
+                           TransactionTimeStamp: DateTime option
+                           Updated: DateTime option
+                           UUID: string }
 
+                         static member FromJson (_ : BandFileItemDTO) : Json<BandFileItemDTO> =    
+                           json {
+                               let! (o: string) = Json.read "o"
+                               let! (category: string) = Json.read "category"
+                               let! (created: int) = Json.read "created"
+                               let! (data: string) = Json.read "d"
+                               let! (fave: int option) = Json.tryRead "fave"
+                               let! (folder: string option) = Json.tryRead "folder"
+                               let! (hmac: string) = Json.read "hmac"
+                               let! (keys: string) = Json.read "k"
+                               let! (trashed: bool option) = Json.tryRead "trashed"
+                               let! (tx: int option) = Json.tryRead "tx"
+                               let! (updated: int option) = Json.tryRead "updated"
+                               let! (uuid: string) = Json.read "uuid"
+     
+                               return { Overview = o
+                                        Category = category
+                                        Created = created |> DateTime.fromUnixTimeStamp
+                                        Data = data |> ByteArray.fromBase64
+                                        FavoriteOrder = fave
+                                        FolderId = folder
+                                        HMAC = hmac |> ByteArray.fromBase64
+                                        EncryptedKeys = keys |> ByteArray.fromBase64
+                                        IsTrashed = trashed |> Option.defaultValue false
+                                        TransactionTimeStamp = tx |> Option.map DateTime.fromUnixTimeStamp
+                                        Updated = updated |> Option.map DateTime.fromUnixTimeStamp
+                                        UUID = uuid }
+                             }
   let private makeJSON =
     let startMarker = "ld({"
     let endMarker = "});"
 
     String.makeJSON startMarker endMarker
 
-  let private parseBandFileJSON (json: string) =
-    try
-      Ok (BandFileJson.Parse json)
-    with
-    | e -> JSONParserError e.Message |> ParserError |> Error
-
-  let private parseBandItem (overviewKey: KeyPair) (prop: JsonValue) =
+  let private parseBandItem (overviewKey: KeyPair) (item: BandFileItemDTO) : Result<BandFileItem, OPVaultError> =
     trial {
-      let! overview = prop?o |> JSON.asString |> Overview.decryptString overviewKey
-      let! category = prop?category |> JSON.asString |> Category.fromCode
+      let! overview = item.Overview |> Overview.decryptString overviewKey
+      let! category = item.Category |> Category.fromCode
 
       return { Overview = overview
                Category = category
-               Created = prop?created |> JSON.asDateTime
-               Data = prop?d |> JSON.asByteArray
-               FavoriteOrder = prop.TryGetProperty("fave") |> Option.map JSON.asInteger
-               FolderId = prop.TryGetProperty("folder")  |> Option.map JSON.asString
-               HMAC = prop?hmac |> JSON.asByteArray
-               EncryptedKeys = prop?k |> JSON.asByteArray
-               IsTrashed = prop.TryGetProperty("trashed") |> Option.map JSON.asBool |> Option.defaultValue false
-               TransactionTimeStamp = prop.TryGetProperty("tx") |> Option.map JSON.asDateTime
-               Updated = prop.TryGetProperty("updated") |> Option.map JSON.asDateTime
-               UUID = prop?uuid |> JSON.asString }
+               Created = item.Created
+               Data = item.Data
+               FavoriteOrder = item.FavoriteOrder
+               FolderId = item.FolderId
+               HMAC = item.HMAC
+               EncryptedKeys = item.EncryptedKeys
+               IsTrashed = item.IsTrashed
+               TransactionTimeStamp = item.TransactionTimeStamp
+               Updated = item.Updated
+               UUID = item.UUID }
     }
+
+  let parseBandFileJSON str : Result<Map<string, BandFileItemDTO>, OPVaultError> =
+    try
+      Json.parse str |> Json.deserialize |> Ok
+    with e -> (JSONParserError e.Message) |> Errors.ParserError |> Result.Error
 
   let readBandFile (profile: DecryptedProfileData) bandfilename = 
     let contents =
@@ -89,23 +126,23 @@ module BandFile =
       | Ok content ->
         trial {
           let! json = content |> makeJSON
-          let! json = json |> parseBandFileJSON
-          let items = [ for prop in json.JsonValue.Properties ->
-                          match prop |> snd |> parseBandItem profile.OverviewKey  with
-                          | Ok item -> Ok item
-                          | Error e -> Error e ] 
-
-          return! items |> Result.fold
+          let! items = json |> parseBandFileJSON
+          return! items 
+                  |> Map.toList
+                  |> List.map (fun (key, item) -> match item |> parseBandItem profile.OverviewKey with
+                                                  | Ok item -> Ok (key, item)
+                                                  | Result.Error e -> Result.Error e) 
+                  |> Result.fold
         } 
-      | Error e ->
+      | Result.Error e ->
         match e with
         | FileError (FileNotFound _) -> Ok []
-        | _ -> Error e
+        | _ -> Result.Error e
 
 
     match contents  with
     | Ok contents ->  
         Ok { Filename = bandfilename 
-             Items = contents }
-    | Error e -> Error e
+             Items = contents |> Map.ofList }
+    | Result.Error e -> Result.Error e
 

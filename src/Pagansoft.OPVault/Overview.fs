@@ -1,48 +1,39 @@
 namespace Pagansoft.OPVault
+open Chiron
 
 type Overview = { Title: string option
                   Info: string option
                   PS: int option
                   Tags: string list
                   Urls: string list }
+                
+                static member FromJson (_ : Overview) : Json<Overview> =
+                  json {
+                    let! title = Json.tryRead "title"
+                    let! info = Json.tryRead "ainfo"
+                    let! ps = Json.tryRead "ps"
+                    let! tags = Json.readOrDefault "tags" []
+                    let! urls = Json.readOrDefault "URLs" []
+                    let! url = Json.tryRead "url"
+                    let urls = match url with
+                               | Some url -> url :: urls
+                               | None -> urls
+                    return { Title = title
+                             Info = info
+                             PS = ps
+                             Tags = tags
+                             Urls = urls }
+                  }
 
 [<RequireQualifiedAccess>]
 module Overview =
   open FSharp.Results.Results
 
-  type private OverviewJSON = FSharp.Data.JsonProvider<""" 
-    [
-      {"ps":0},
-      {"title":"Title","ps":0,"ainfo":"ainfo"},
-      {"title":"Title","ainfo":"ainfo"},
-      {"title":"Title","ainfo":"ainfo","ps":0},
-      {"title":"Title","ainfo":"","tags":["Tag1"],"ps":0},
-      {"title":"Title","ainfo":"ainfo","tags":["Tag1"],"ps":0},
-      {"title":"Title","ainfo":"ainfo","tags":["Tag1","Tag2"],"ps":0},
-      {"URLs":[{"u":"https://www.foo.com/"}],"tags":["Tag1"],"title":"Title","url":"http://www.foo.com","ainfo":"ainfo","ps":78},
-      {"title":"Title","URLs":[{"u":"https://www.foo.com/"}],"ainfo":"ainfo","url":"https://www.foo.com/","tags":["Tag1"],"ps":66},
-      {"title":"Title","URLs":[{"u":"https://www.foo.com/"}],"ainfo":"ainfo","url":"https://www.foo.com/","tags":["Tag1","Tag2"],"ps":66}
-    ] """, SampleIsList = true>
-
-  let private parseOverviewItem (item: OverviewJSON.Root) =
-    { Title = item.Title
-      Info = item.Ainfo
-      PS = item.Ps
-      Tags = item.Tags |> Array.toList
-      Urls = seq {
-        match item.Url with 
-        | Some url -> yield url
-        | None -> ()
-
-        for url in item.UrLs do
-          yield url.U
-      } |> Seq.distinct |> Seq.toList  }
-
-  let private parseJSON (json: string) =
+  let private parseJSON (json: string) : Result<Overview, OPVaultError>=
     try
-      Ok (OverviewJSON.Parse json |> parseOverviewItem)
+      Json.parse json |> Json.deserialize |> Ok
     with
-    | e -> JSONParserError e.Message |> ParserError |> Error
+    | e -> JSONParserError e.Message |> ParserError |> Result.Error
 
   let decrypt overviewKey encryptedData =
     trial {

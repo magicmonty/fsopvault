@@ -20,13 +20,13 @@ type LockedVault = { VaultDir: string }
                         return { VaultDir = this.VaultDir
                                  Profile = profileData
                                  BandFiles = bandFiles
-                                 Folders = folders }
+                                 Folders = folders |> Map.ofList }
                       }
                       
 and UnlockedVault = { VaultDir: string
                       Profile: DecryptedProfileData
                       BandFiles: BandFile list
-                      Folders: Folder list }
+                      Folders: Map<string, Folder> }
                     
                     member this.Lock () =
                       { VaultDir = this.VaultDir }

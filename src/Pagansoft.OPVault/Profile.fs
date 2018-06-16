@@ -1,14 +1,40 @@
 namespace Pagansoft.OPVault
 
+open Chiron
+open System
+
 type EncryptedProfileData = { LastUpdatedBy: string option
-                              UpdatedAt: System.DateTime option
+                              UpdatedAt: DateTime option
                               ProfileName: string
                               Salt: byte array
                               MasterKey: byte array
                               OverviewKey: byte array
                               Iterations: int
                               UUID: string
-                              CreatedAt: System.DateTime }
+                              CreatedAt: DateTime }
+
+                            static member FromJson (_ : EncryptedProfileData) : Json<EncryptedProfileData> =
+                              json {
+                                let! lastUpdatedBy = Json.tryRead "lastUpdatedBy"
+                                let! (updatedAt: int option) = Json.tryRead "updatedAt"
+                                let! profileName = Json.read "profileName"
+                                let! salt = Json.read "salt"
+                                let! masterKey = Json.read "masterKey"
+                                let! overviewKey = Json.read "overviewKey"
+                                let! iterations = Json.read "iterations"
+                                let! uuid = Json.read "uuid"
+                                let! (createdAt: int) = Json.read "createdAt"
+
+                                return { LastUpdatedBy = lastUpdatedBy
+                                         UpdatedAt = updatedAt |> Option.map DateTime.fromUnixTimeStamp
+                                         ProfileName = profileName
+                                         Salt = salt |> ByteArray.fromBase64
+                                         MasterKey = masterKey |> ByteArray.fromBase64
+                                         OverviewKey = overviewKey |> ByteArray.fromBase64
+                                         Iterations = iterations
+                                         UUID = uuid
+                                         CreatedAt = createdAt |> DateTime.fromUnixTimeStamp }
+                              }
 
 type DecryptedProfileData = { LastUpdatedBy: string option
                               UpdatedAt: System.DateTime option
@@ -26,9 +52,8 @@ type Profile =
 
 [<RequireQualifiedAccess>]
 module Profile =
-  open System
-  open FSharp.Data
   open FSharp.Results.Results
+
 
   let empty = 
     { LastUpdatedBy = None
@@ -40,37 +65,26 @@ module Profile =
       Iterations = 50000
       UUID = "00000000000000000000000000000000"
       CreatedAt = DateTime.Now }
-
-  type private ProfileJson = JsonProvider<""" [{"lastUpdatedBy":"FOO","updatedAt":1370323483,"profileName":"FOO","salt":"FOO","masterKey":"FOO","iterations":50000,"uuid":"FOO","overviewKey":"FOO","createdAt":1373753414},{"profileName":"FOO","salt":"FOO","masterKey":"FOO","iterations":50000,"uuid":"FOO","overviewKey":"FOO","createdAt":1373753414}] """, SampleIsList=true>
-
+  
   let private startMarker = "varprofile={"
   let private endMarker = "};"
 
-  let private profileError error = error |> ProfileError |> Error
+  let private profileError error = error |> ProfileError |> Result.Error
 
   let private makeJSONText = String.makeJSON startMarker endMarker
 
-  let private parseProfileJSON (json: string) =
+  let private parseProfileJSON (json: string) : Result<EncryptedProfileData, OPVaultError> =
     try
-      Ok (ProfileJson.Parse json)
+      Ok (Json.parse json |> Json.deserialize)
     with
-    | e -> JSONParserError e.Message |> ParserError |> Error
+    | e -> JSONParserError e.Message |> ParserError |> Result.Error
 
   let read filename =
     trial {
       let! content = File.read filename
       let! content = makeJSONText content
-      let! json = content |> parseProfileJSON
-      return EncryptedProfile 
-        { LastUpdatedBy = json.LastUpdatedBy
-          UpdatedAt = json.UpdatedAt |> Option.map DateTime.fromUnixTimeStamp
-          ProfileName = json.ProfileName
-          Salt = json.Salt |> ByteArray.fromBase64
-          MasterKey = json.MasterKey |> ByteArray.fromBase64
-          OverviewKey = json.OverviewKey |> ByteArray.fromBase64
-          Iterations = json.Iterations
-          UUID = json.Uuid
-          CreatedAt = json.CreatedAt |> DateTime.fromUnixTimeStamp } 
+      let! profileData = content |> parseProfileJSON
+      return EncryptedProfile profileData 
     }
 
   let getDecryptedProfileData profile =

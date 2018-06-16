@@ -30,14 +30,3 @@ module DateTime =
   let fromUnixTimeStamp (value: int) =
     let dtDateTime = System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
     (dtDateTime.AddSeconds (float value)).ToLocalTime()
-
-[<RequireQualifiedAccess>]
-module JSON =
-  open FSharp.Data
-  open FSharp.Data.JsonExtensions
-
-  let asInteger (v: JsonValue) = v.AsInteger()
-  let asBool (v: JsonValue) = v.AsBoolean()
-  let asString (v: JsonValue) = v.AsString()
-  let asByteArray (v: JsonValue) = v |> asString |> ByteArray.fromBase64
-  let asDateTime (v: JsonValue) = v |> asInteger |> DateTime.fromUnixTimeStamp
