@@ -1,6 +1,5 @@
 namespace Pagansoft.OPVault
 
-open System
 open System.IO
 open System.Security.Cryptography
 open FSharp.Results.Results

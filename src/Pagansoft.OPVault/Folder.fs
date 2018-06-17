@@ -12,41 +12,25 @@ type Folder = { UUID: string
 module Folder =
   open FSharp.Results
   open FSharp.Results.Results
-  open Chiron
+  open Newtonsoft.Json
 
-  type FolderDTO = { UUID: string
-                     Overview: string
-                     Created: int
-                     TransactionTimeStamp: int
-                     Updated: int
-                     IsSmartFolder: bool }
+  type FolderDTO = { uuid: string
+                     overview: string
+                     created: int
+                     tx: int
+                     updated: int
+                     smart: System.Nullable<bool> }
                    
-                   static member FromJson (_ : FolderDTO) : Json<FolderDTO> =
-                    json {
-                      let! created = Json.read "created"
-                      let! overview = Json.read "overview"
-                      let! tx = Json.read "tx"
-                      let! updated = Json.read "updated"
-                      let! smart = Json.tryRead "smart"
-                      let! uuid = Json.read "uuid"
-                      return { UUID = uuid
-                               Overview = overview
-                               Created = created
-                               TransactionTimeStamp = tx
-                               Updated = updated
-                               IsSmartFolder = smart |> Option.defaultValue false }
-                    }
-
   let parseFolderItem (overviewKey: KeyPair) (prop: FolderDTO) : Result<Folder, OPVaultError> =
     trial {
-      let! overview = prop.Overview |> ByteArray.fromBase64 |> overviewKey.DecryptByteArray false
+      let! overview = prop.overview |> ByteArray.fromBase64 |> overviewKey.DecryptByteArray false
       
-      return { UUID = prop.UUID
+      return { UUID = prop.uuid
                Overview = overview |> Array.skipWhile (fun b -> b = 0uy) |> String.bytesAsString
-               Created = prop.Created |> DateTime.fromUnixTimeStamp
-               TransactionTimeStamp = prop.TransactionTimeStamp |> DateTime.fromUnixTimeStamp
-               Updated = prop.Updated |> DateTime.fromUnixTimeStamp
-               IsSmartFolder = prop.IsSmartFolder }
+               Created = prop.created |> DateTime.fromUnixTimeStamp
+               TransactionTimeStamp = prop.tx |> DateTime.fromUnixTimeStamp
+               Updated = prop.updated |> DateTime.fromUnixTimeStamp
+               IsSmartFolder = prop.smart |> Option.fromNullable |> Option.defaultValue false }
     }
   
   let makeJSON content = 
@@ -57,9 +41,9 @@ module Folder =
 
   let parseFolderFileJSON (json: string) : Result<Map<string, FolderDTO>, OPVaultError> =
     try
-      Json.parse json |> Json.deserialize |> Ok
+      JsonConvert.DeserializeObject<Map<string, FolderDTO>> json |> Ok
     with
-    | e -> JSONParserError e.Message |> ParserError |> Result.Error
+    | _ -> JSONParserError json |> ParserError |> Error
 
   let read (profile: DecryptedProfileData) (vaultDir: string) =
     let filename = sprintf "%s/folders.js" vaultDir
@@ -72,10 +56,10 @@ module Folder =
                 |> Map.toList
                 |> List.map (fun (key, item) -> match item |> parseFolderItem profile.OverviewKey with
                                                 | Ok item -> Ok (key, item)
-                                                | Result.Error e -> Result.Error e) 
+                                                | Error e -> Error e) 
                 |> Result.fold
       } 
-    | Result.Error e ->
+    | Error e ->
       match e with
       | FileError (FileNotFound _) -> Ok []
-      | _ -> Result.Error e
+      | _ -> Error e

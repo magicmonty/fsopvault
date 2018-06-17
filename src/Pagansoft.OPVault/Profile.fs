@@ -1,6 +1,5 @@
 namespace Pagansoft.OPVault
 
-open Chiron
 open System
 
 type EncryptedProfileData = { LastUpdatedBy: string option
@@ -12,30 +11,7 @@ type EncryptedProfileData = { LastUpdatedBy: string option
                               Iterations: int
                               UUID: string
                               CreatedAt: DateTime }
-
-                            static member FromJson (_ : EncryptedProfileData) : Json<EncryptedProfileData> =
-                              json {
-                                let! lastUpdatedBy = Json.tryRead "lastUpdatedBy"
-                                let! (updatedAt: int option) = Json.tryRead "updatedAt"
-                                let! profileName = Json.read "profileName"
-                                let! salt = Json.read "salt"
-                                let! masterKey = Json.read "masterKey"
-                                let! overviewKey = Json.read "overviewKey"
-                                let! iterations = Json.read "iterations"
-                                let! uuid = Json.read "uuid"
-                                let! (createdAt: int) = Json.read "createdAt"
-
-                                return { LastUpdatedBy = lastUpdatedBy
-                                         UpdatedAt = updatedAt |> Option.map DateTime.fromUnixTimeStamp
-                                         ProfileName = profileName
-                                         Salt = salt |> ByteArray.fromBase64
-                                         MasterKey = masterKey |> ByteArray.fromBase64
-                                         OverviewKey = overviewKey |> ByteArray.fromBase64
-                                         Iterations = iterations
-                                         UUID = uuid
-                                         CreatedAt = createdAt |> DateTime.fromUnixTimeStamp }
-                              }
-
+                              
 type DecryptedProfileData = { LastUpdatedBy: string option
                               UpdatedAt: System.DateTime option
                               ProfileName: string
@@ -53,6 +29,17 @@ type Profile =
 [<RequireQualifiedAccess>]
 module Profile =
   open FSharp.Results.Results
+  open Newtonsoft.Json
+
+  type ProfileDTO = { lastUpdatedBy: string
+                      updatedAt: Nullable<int>
+                      profileName: string
+                      salt: string
+                      masterKey: string
+                      overviewKey: string
+                      iterations: int
+                      uuid: string
+                      createdAt: int }
 
 
   let empty = 
@@ -73,11 +60,24 @@ module Profile =
 
   let private makeJSONText = String.makeJSON startMarker endMarker
 
+  let private convertToProfileData (dto: ProfileDTO) : EncryptedProfileData =
+    { LastUpdatedBy = dto.lastUpdatedBy |> Option.fromNullableString
+      UpdatedAt = dto.updatedAt |> Option.fromNullable |> Option.map DateTime.fromUnixTimeStamp
+      ProfileName = dto.profileName
+      Salt = dto.salt |> ByteArray.fromBase64
+      MasterKey = dto.masterKey |> ByteArray.fromBase64
+      OverviewKey = dto.overviewKey |> ByteArray.fromBase64
+      Iterations = dto.iterations
+      UUID = dto.uuid
+      CreatedAt = dto.createdAt |> DateTime.fromUnixTimeStamp }
+
   let private parseProfileJSON (json: string) : Result<EncryptedProfileData, OPVaultError> =
     try
-      Ok (Json.parse json |> Json.deserialize)
+      JsonConvert.DeserializeObject<ProfileDTO> json
+      |> convertToProfileData
+      |> Ok
     with
-    | e -> JSONParserError e.Message |> ParserError |> Result.Error
+    | e -> JSONParserError json |> ParserError |> Result.Error
 
   let read filename =
     trial {

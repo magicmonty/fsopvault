@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Errors.fs" />
@@ -10,8 +9,7 @@
     <Compile Include="Designation.fs" />
     <Compile Include="FieldType.fs" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="File.fs" />
-    <Compile Include="ResultModule.fs" />
+    <Compile Include="Results.fs" />
     <Compile Include="BinaryParser.fs" />
     <Compile Include="OPData.fs" />
     <Compile Include="Profile.fs" />

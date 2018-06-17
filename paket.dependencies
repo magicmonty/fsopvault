@@ -1,5 +1,6 @@
 source https://www.nuget.org/api/v2
 generate_load_scripts: true
+framework: auto-detect
 
 nuget Microsoft.AspNetCore.Cryptography.KeyDerivation
-nuget Chiron
+nuget Newtonsoft.Json
