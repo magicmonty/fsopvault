@@ -1,6 +1,7 @@
 namespace Pagansoft.OPVault
 
 open System
+open FSharp.Results
 
 type EncryptedProfileData = { LastUpdatedBy: string option
                               UpdatedAt: DateTime option
@@ -11,7 +12,29 @@ type EncryptedProfileData = { LastUpdatedBy: string option
                               Iterations: int
                               UUID: string
                               CreatedAt: DateTime }
-                              
+
+and ProfileDTO = { lastUpdatedBy: string
+                   updatedAt: Nullable<int>
+                   profileName: string
+                   salt: string
+                   masterKey: string
+                   overviewKey: string
+                   iterations: int
+                   uuid: string
+                   createdAt: int }
+
+                 member this.ToDomainObject : EncryptedProfileData =
+                     { LastUpdatedBy = this.lastUpdatedBy |> Option.fromNullableString
+                       UpdatedAt = this.updatedAt |> Option.fromNullable |> Option.map DateTime.fromUnixTimeStamp
+                       ProfileName = this.profileName
+                       Salt = this.salt |> ByteArray.fromBase64
+                       MasterKey = this.masterKey |> ByteArray.fromBase64
+                       OverviewKey = this.overviewKey |> ByteArray.fromBase64
+                       Iterations = this.iterations
+                       UUID = this.uuid
+                       CreatedAt = this.createdAt |> DateTime.fromUnixTimeStamp }
+
+
 type DecryptedProfileData = { LastUpdatedBy: string option
                               UpdatedAt: System.DateTime option
                               ProfileName: string
@@ -29,18 +52,7 @@ type Profile =
 [<RequireQualifiedAccess>]
 module Profile =
   open FSharp.Results.Results
-  open Newtonsoft.Json
-
-  type ProfileDTO = { lastUpdatedBy: string
-                      updatedAt: Nullable<int>
-                      profileName: string
-                      salt: string
-                      masterKey: string
-                      overviewKey: string
-                      iterations: int
-                      uuid: string
-                      createdAt: int }
-
+  open ResultOperators
 
   let empty = 
     { LastUpdatedBy = None
@@ -53,39 +65,23 @@ module Profile =
       UUID = "00000000000000000000000000000000"
       CreatedAt = DateTime.Now }
   
-  let private startMarker = "varprofile={"
-  let private endMarker = "};"
-
   let private profileError error = error |> ProfileError |> Result.Error
+  
+  module JSON =
+    let clean = String.makeJSON "varprofile={" "};"
 
-  let private makeJSONText = String.makeJSON startMarker endMarker
+    let deserialzeDTO = Json.deserialize<ProfileDTO>
 
-  let private convertToProfileData (dto: ProfileDTO) : EncryptedProfileData =
-    { LastUpdatedBy = dto.lastUpdatedBy |> Option.fromNullableString
-      UpdatedAt = dto.updatedAt |> Option.fromNullable |> Option.map DateTime.fromUnixTimeStamp
-      ProfileName = dto.profileName
-      Salt = dto.salt |> ByteArray.fromBase64
-      MasterKey = dto.masterKey |> ByteArray.fromBase64
-      OverviewKey = dto.overviewKey |> ByteArray.fromBase64
-      Iterations = dto.iterations
-      UUID = dto.uuid
-      CreatedAt = dto.createdAt |> DateTime.fromUnixTimeStamp }
-
-  let private parseProfileJSON (json: string) : Result<EncryptedProfileData, OPVaultError> =
-    try
-      JsonConvert.DeserializeObject<ProfileDTO> json
-      |> convertToProfileData
-      |> Ok
-    with
-    | e -> JSONParserError json |> ParserError |> Result.Error
+    let parse (json: string) : Result<EncryptedProfileData, OPVaultError> =
+      json
+      |> deserialzeDTO
+      |=> fun dto -> dto.ToDomainObject
 
   let read filename =
-    trial {
-      let! content = File.read filename
-      let! content = makeJSONText content
-      let! profileData = content |> parseProfileJSON
-      return EncryptedProfile profileData 
-    }
+    File.read filename
+    |> Result.bind JSON.clean
+    |> Result.bind JSON.parse
+    |> Result.map EncryptedProfile
 
   let getDecryptedProfileData profile =
     match profile with
@@ -103,10 +99,10 @@ module Profile =
     | DecryptedProfile profile -> Ok profile.MasterKey
 
   let private decryptKey getEncryptedKeyData (derivedKeys: KeyPair) (encryptedProfileData: EncryptedProfileData) = 
-    trial {
-      let! encryptedKeyData = encryptedProfileData |> getEncryptedKeyData |> OPData.parseBytes
-      return! encryptedKeyData.DecryptKeys derivedKeys
-    }
+    encryptedProfileData 
+    |> getEncryptedKeyData 
+    |> OPData.parseBytes
+    |-> fun data -> data.DecryptKeys derivedKeys
 
   let private decryptMasterKey = decryptKey (fun p -> p.MasterKey)
   let private decryptOverviewKey = decryptKey (fun p -> p.OverviewKey)

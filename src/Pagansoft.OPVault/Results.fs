@@ -2,6 +2,7 @@ namespace FSharp.Results
 
 [<RequireQualifiedAccess>]
 module Result =
+
   let combine (a: Result<'a list, 'e>) (b: Result<'a, 'e>): Result<'a list, 'e> =
     match a, b with
     | Error a, _ -> Error a

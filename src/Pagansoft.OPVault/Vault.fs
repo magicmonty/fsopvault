@@ -13,20 +13,21 @@ type LockedVault = { VaultDir: string }
                           [ for i in 0 .. 15 -> 
                               let bandNumber = (sprintf "%x" i).ToUpper()
                               let filename = sprintf "%s/band_%s.js" this.VaultDir bandNumber
-                              filename |> BandFile.readBandFile profileData ] 
+                              filename |> BandFile.read profileData.OverviewKey ] 
                           |> FSharp.Results.Result.fold
-                        let! folders = Folder.read profileData this.VaultDir 
+                        let items = bandFiles |> List.collect (fun f -> f.Items |> Map.toList)
+                        let! folders = Folder.read profileData.OverviewKey this.VaultDir 
   
                         return { VaultDir = this.VaultDir
                                  Profile = profileData
-                                 BandFiles = bandFiles
-                                 Folders = folders |> Map.ofList }
+                                 Items = items |> Map.ofList
+                                 Folders = folders }
                       }
                       
 and UnlockedVault = { VaultDir: string
                       Profile: DecryptedProfileData
-                      BandFiles: BandFile list
-                      Folders: Map<string, Folder> }
+                      Items: Map<UUID, BandFileItem>
+                      Folders: Map<UUID, Folder> }
                     
                     member this.Lock () =
                       { VaultDir = this.VaultDir }

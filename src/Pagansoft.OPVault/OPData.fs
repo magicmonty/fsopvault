@@ -68,7 +68,6 @@ and OPData =
     | Decrypted _ -> Ok ()
     | Encrypted data -> data.Authenticate keys
 
-
 and KeyPair = { EncryptionKey: byte array
                 AuthenticationKey: byte array }
                  
@@ -89,7 +88,7 @@ and KeyPair = { EncryptionKey: byte array
                   let hash = 
                     use h = new SHA512Managed()
                     h.ComputeHash plainTextBytes
-                    
+
                   { EncryptionKey = hash |> Array.take Crypto.KeySizeInBytes
                     AuthenticationKey = hash |> Array.skip Crypto.KeySizeInBytes }
                 
@@ -159,7 +158,7 @@ module KeyPair =
                AuthenticationKey = auth }
     }
 
-    match parser.Function binaryReader with
+    match parser.Parse binaryReader with
     | Ok (v, _) -> Ok v
     | Error e -> Error e
 
@@ -192,7 +191,7 @@ module OPData =
                            CipherText = cipherText
                            HMAC = hmac }
       }
-      let! v, _ = parser.Function binaryReader
+      let! v, _ = parser.Parse binaryReader
       return v
     }
 

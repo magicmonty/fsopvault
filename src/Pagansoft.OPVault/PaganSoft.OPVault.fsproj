@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Errors.fs" />
+    <Compile Include="Types.fs" />
     <Compile Include="Crypto.fs" />
     <Compile Include="Category.fs" />
     <Compile Include="Designation.fs" />

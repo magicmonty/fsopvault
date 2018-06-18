@@ -32,7 +32,7 @@ module DateTime =
     (dtDateTime.AddSeconds (float value)).ToLocalTime()
 
 [<RequireQualifiedAccess>]
-module Option =
+module Option=
   let fromNullable (value: System.Nullable<'a>) : 'a option =
     if value.HasValue
     then Some value.Value
@@ -44,8 +44,7 @@ module Option =
     | _ -> Some value
 
 [<RequireQualifiedAccess>]
-module File =
-  
+module File = 
   let read filename = 
     try
       Ok (System.IO.File.ReadAllText filename)
@@ -53,3 +52,16 @@ module File =
     | :? System.IO.FileNotFoundException -> FileNotFound filename |> FileError |> Error
     | :? System.IO.DirectoryNotFoundException -> FileNotFound filename |> FileError |> Error
     | e -> UnknownError (sprintf "%s: %s" ((e.GetType()).Name) e.Message) |> Error
+
+module ResultOperators =
+  let inline (|=>) result mapping = Result.map mapping result
+  let inline (|->) result binder = Result.bind binder result
+
+module Json = 
+  open Newtonsoft.Json
+  
+  let deserialize<'a> (json: string) = 
+    try
+      JsonConvert.DeserializeObject<'a> json |> Ok
+    with
+    | _ -> JSONParserError json |> ParserError |> Error

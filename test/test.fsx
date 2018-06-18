@@ -1,7 +1,7 @@
 #load @"../.paket/load/Microsoft.AspNetCore.Cryptography.KeyDerivation.fsx"
 #load @"../.paket/load/Newtonsoft.Json.fsx"
 
-#load "../src/Pagansoft.OPVault/Errors.fs"
+#load "../src/Pagansoft.OPVault/Types.fs"
 #load "../src/Pagansoft.OPVault/Crypto.fs"
 #load "../src/Pagansoft.OPVault/Helpers.fs"
 #load "../src/Pagansoft.OPVault/Results.fs"
@@ -27,8 +27,9 @@ let unlockedVault = vault.Unlock password
 trial {
   let! unlocked = unlockedVault
   let! items =    
-    unlocked.BandFiles
-    |> List.collect (fun f -> f.Items |> Map.toList |> List.map snd) 
+    unlocked.Items
+    |> Map.toList 
+    |> List.map snd 
     |> List.map (fun f -> f.Decrypt unlocked.Profile.MasterKey)
     |> Result.fold
 

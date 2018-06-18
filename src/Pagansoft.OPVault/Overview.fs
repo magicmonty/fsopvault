@@ -6,48 +6,51 @@ type Overview = { Title: string option
                   Tags: string list
                   Urls: string list }
 
+and OverviewUrl = { u: string }
+
+and OverviewDTO = { title: string
+                    ainfo: string
+                    ps: System.Nullable<int>
+                    tags: string array
+                    URLs: OverviewUrl array
+                    url: string }
+
+                  member this.ToDomainObject =
+                    let urls = match this.URLs with
+                               | null -> []
+                               | urls -> urls |> Array.toList |> List.map (fun url -> url.u)
+                    let urls = match (this.url |> Option.fromNullableString), urls with 
+                               | None, urls -> urls
+                               | Some url, urls -> url :: urls
+                    { Title = this.title |> Option.fromNullableString
+                      Info = this.ainfo |> Option.fromNullableString
+                      PS = this.ps |> Option.fromNullable
+                      Tags = match this.tags with
+                             | null -> []
+                             | v -> v |> Array.toList
+                      Urls = urls }
+
+
 [<RequireQualifiedAccess>]
 module Overview =
   open FSharp.Results.Results
-  open Newtonsoft.Json
+  
+  module private JSON =
+    open ResultOperators
 
-  type OverviewUrl = { u: string }
-  type OverviewDTO = { title: string
-                       ainfo: string
-                       ps: System.Nullable<int>
-                       tags: string array
-                       URLs: OverviewUrl array
-                       url: string }
+    let deserializeDTO = Json.deserialize<OverviewDTO>
 
-  let convertToOverview (dto: OverviewDTO) : Overview =
-    let urls = match dto.URLs with
-               | null -> []
-               | urls -> urls |> Array.toList |> List.map (fun url -> url.u)
-    let urls = match (dto.url |> Option.fromNullableString), urls with 
-               | None, urls -> urls
-               | Some url, urls -> url :: urls
-    { Title = dto.title |> Option.fromNullableString
-      Info = dto.ainfo |> Option.fromNullableString
-      PS = dto.ps |> Option.fromNullable
-      Tags = match dto.tags with
-             | null -> []
-             | v -> v |> Array.toList
-      Urls = urls }
-
-  let private parseJSON (json: string) : Result<Overview, OPVaultError>=
-    try
-      JsonConvert.DeserializeObject<OverviewDTO> json
-      |> convertToOverview 
-      |> Ok
-    with
-    | e -> JSONParserError json |> ParserError |> Result.Error
+    let parse (json: string) : Result<Overview, OPVaultError>=
+        json 
+        |> deserializeDTO 
+        |=> fun d -> d.ToDomainObject 
 
   let decrypt overviewKey encryptedData =
     trial {
       let! encryptedOverviewData = encryptedData |> OPData.parseBytes
       let! decryptedOverviewData = encryptedOverviewData |> OPData.authenticateAndDecrypt overviewKey
       let! plainText = decryptedOverviewData.PlainTextAsString ()
-      return! parseJSON plainText
+      return! JSON.parse plainText
     }
 
   let decryptString overviewKey encryptedData =

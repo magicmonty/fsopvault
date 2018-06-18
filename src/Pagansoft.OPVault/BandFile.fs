@@ -11,13 +11,13 @@ type BandFileItem = { Overview: Overview
                       Created: DateTime
                       Data: byte array
                       FavoriteOrder: int option
-                      FolderId: string option
+                      FolderId: UUID option
                       HMAC: byte array
                       EncryptedKeys: byte array
                       IsTrashed: bool
                       TransactionTimeStamp: DateTime
                       Updated: DateTime
-                      UUID: string }
+                      UUID: UUID }
 
                     member this.Decrypt (masterKeys: KeyPair) : Result<BandFileItemData, OPVaultError> =
                       let checkKeyData keyData =
@@ -43,79 +43,74 @@ type BandFileItem = { Overview: Overview
                       }
 
 type BandFile = { Filename: string
-                  Items: Map<string, BandFileItem> }
+                  Items: Map<UUID, BandFileItem>
+                  Keys: UUID seq }
+
+and BandFileItemDTO = { category: string
+                        created: int
+                        d: string
+                        folder: string
+                        hmac: string
+                        k: string
+                        o: string
+                        tx: int
+                        updated: int
+                        uuid: string 
+                        fave: System.Nullable<int>
+                        trashed: System.Nullable<bool> }
+
+                      member this.ToDomainObject (overviewKey: KeyPair): Result<UUID * BandFileItem, OPVaultError> =
+                        trial {
+                          let! overview = this.o |> Overview.decryptString overviewKey
+                          let! category = this.category |> Category.fromCode
+                          let uuid = UUID this.uuid
+
+                          return uuid, { Overview = overview
+                                         Category = category
+                                         Created = this.created |> DateTime.fromUnixTimeStamp
+                                         Data = this.d |> ByteArray.fromBase64
+                                         FavoriteOrder = this.fave |> Option.fromNullable
+                                         FolderId = this.folder |> Option.fromNullableString |> Option.map UUID
+                                         HMAC = this.hmac |> ByteArray.fromBase64
+                                         EncryptedKeys = this.k |> ByteArray.fromBase64
+                                         IsTrashed = this.trashed  |> Option.fromNullable |> Option.defaultValue false
+                                         TransactionTimeStamp = this.tx |> DateTime.fromUnixTimeStamp
+                                         Updated = this.updated |> DateTime.fromUnixTimeStamp
+                                         UUID = this.uuid |> UUID }
+                        }
 
 [<RequireQualifiedAccess>]
 module BandFile =
-  open Newtonsoft.Json
-  
-  type BandFileItemDTO = { category: string
-                           created: int
-                           d: string
-                           folder: string
-                           hmac: string
-                           k: string
-                           o: string
-                           tx: int
-                           updated: int
-                           uuid: string 
-                           fave: System.Nullable<int>
-                           trashed: System.Nullable<bool> }
-                            
-  let makeJSON =
-    let startMarker = "ld({"
-    let endMarker = "});"
+  open ResultOperators
 
-    String.makeJSON startMarker endMarker
+  module private JSON =
+    let clean = String.makeJSON "ld({" "});"
 
-  let parseBandItem (overviewKey: KeyPair) (item: BandFileItemDTO) : Result<BandFileItem, OPVaultError> =
+    let deserializeDTO = Json.deserialize<Map<string, BandFileItemDTO>>
+
+    let parse (overviewKey: KeyPair) json : Result<Map<UUID, BandFileItem>, OPVaultError> =
+      json
+      |> deserializeDTO 
+      |=> Map.toList
+      |=> List.map (snd >> (fun item -> item.ToDomainObject overviewKey))
+      |-> Result.fold
+      |=> Map.ofList  
+
+  let read (overviewKey: KeyPair) bandfilename = 
     trial {
-      let! overview = item.o |> Overview.decryptString overviewKey
-      let! category = item.category |> Category.fromCode
-
-      return { Overview = overview
-               Category = category
-               Created = item.created |> DateTime.fromUnixTimeStamp
-               Data = item.d |> ByteArray.fromBase64
-               FavoriteOrder = item.fave |> Option.fromNullable
-               FolderId = item.folder |> Option.fromNullableString
-               HMAC = item.hmac |> ByteArray.fromBase64
-               EncryptedKeys = item.k |> ByteArray.fromBase64
-               IsTrashed = item.trashed  |> Option.fromNullable |> Option.defaultValue false
-               TransactionTimeStamp = item.tx |> DateTime.fromUnixTimeStamp
-               Updated = item.updated |> DateTime.fromUnixTimeStamp
-               UUID = item.uuid }
+      let! contents =
+        match File.read bandfilename with
+        | Ok content ->
+            content
+            |> JSON.clean
+            |-> JSON.parse overviewKey
+        | Result.Error e ->
+          match e with
+          | FileError (FileNotFound _) -> Ok Map.empty
+          | _ -> Error e
+    
+      return { Filename = bandfilename 
+               Items = contents
+               Keys = contents |> Map.toSeq |> Seq.map fst }
     }
-
-  let parseBandFileJSON str : Result<Map<string, BandFileItemDTO>, OPVaultError> =
-    try
-      JsonConvert.DeserializeObject<Map<string, BandFileItemDTO>> str 
-      |> Ok
-    with _ -> (JSONParserError str) |> Errors.ParserError |> Error
-
-  let readBandFile (profile: DecryptedProfileData) bandfilename = 
-    let contents =
-      match File.read bandfilename with
-      | Ok content ->
-        trial {
-          let! json = content |> makeJSON
-          let! items = json |> parseBandFileJSON
-          return! items 
-                  |> Map.toList
-                  |> List.map (fun (key, item) -> match item |> parseBandItem profile.OverviewKey with
-                                                  | Ok item -> Ok (key, item)
-                                                  | Error e -> Error e) 
-                  |> Result.fold
-        } 
-      | Result.Error e ->
-        match e with
-        | FileError (FileNotFound _) -> Ok []
-        | _ -> Error e
-
-
-    match contents  with
-    | Ok contents ->  
-        Ok { Filename = bandfilename 
-             Items = contents |> Map.ofList }
-    | Error e -> Error e
 
