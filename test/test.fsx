@@ -2,6 +2,7 @@
 #load @"../.paket/load/Newtonsoft.Json.fsx"
 
 #load "../src/Pagansoft.OPVault/Types.fs"
+#load "../src/Pagansoft.OPVault/Designation.fs"
 #load "../src/Pagansoft.OPVault/Crypto.fs"
 #load "../src/Pagansoft.OPVault/Helpers.fs"
 #load "../src/Pagansoft.OPVault/Results.fs"
@@ -11,6 +12,7 @@
 #load "../src/Pagansoft.OPVault/Category.fs"
 #load "../src/Pagansoft.OPVault/Profile.fs"
 #load "../src/Pagansoft.OPVault/Folder.fs"
+#load "../src/Pagansoft.OPVault/Item.fs"
 #load "../src/Pagansoft.OPVault/BandFile.fs"
 #load "../src/Pagansoft.OPVault/Vault.fs"
 
@@ -39,9 +41,11 @@ let items =
   |> List.filter (fun i -> not i.MetaData.IsTrashed)
   |> List.map (fun i -> i.MetaData.UUID, (match i.Data with | DecryptedBandFileItemData data -> data | _ -> ""))
   |> List.filter (fun (_, i) -> i <> "")
-  |> List.map (fun (UUID uuid, data) -> uuid, JObject.Parse(data))
-  |> Map.ofList
+  |> List.map (fun (UUID uuid, data) -> uuid, data)
 
-let itemText = items |> Json.serialize |> Result.defaultValue ""
+items 
+|> List.map snd 
+|> List.map JSON.ItemDTO.Deserialize
+JSON.ItemDTO.Deserialize itemText
 
 File.WriteAllText("test/items.json", itemText)

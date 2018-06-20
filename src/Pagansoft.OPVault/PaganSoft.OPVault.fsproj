@@ -15,6 +15,7 @@
     <Compile Include="Profile.fs" />
     <Compile Include="Overview.fs" />
     <Compile Include="Folder.fs" />
+    <Compile Include="Item.fs" />
     <Compile Include="BandFile.fs" />
     <Compile Include="Vault.fs" />
   </ItemGroup>

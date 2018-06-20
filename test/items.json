@@ -1,0 +1,1821 @@
+{
+  "0EDE2B13D7AC4E2C9105842682ACB187": {
+    "sections": [
+      {
+        "name": "name",
+        "title": "Identification",
+        "fields": [
+          {
+            "k": "string",
+            "v": "Wendy",
+            "n": "firstname",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "first name"
+          },
+          {
+            "k": "string",
+            "n": "initial",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "initial"
+          },
+          {
+            "k": "string",
+            "v": "Appleseed",
+            "n": "lastname",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "last name"
+          },
+          {
+            "k": "menu",
+            "v": "female",
+            "n": "sex",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "sex"
+          },
+          {
+            "k": "date",
+            "v": 359100000,
+            "n": "birthdate",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "birth date"
+          },
+          {
+            "k": "string",
+            "v": "Customer Relations",
+            "n": "occupation",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "occupation"
+          },
+          {
+            "k": "string",
+            "v": "AgileBits",
+            "n": "company",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "company"
+          },
+          {
+            "k": "string",
+            "v": "Customer Care",
+            "n": "department",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "department"
+          },
+          {
+            "k": "string",
+            "v": "Manager",
+            "n": "jobtitle",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "job title"
+          }
+        ]
+      },
+      {
+        "name": "address",
+        "title": "Address",
+        "fields": [
+          {
+            "k": "address",
+            "v": {
+              "city": "Aurora",
+              "zip": "L4G8A3",
+              "state": "Ontario",
+              "country": "ca",
+              "street": "5-150 Hollidge Blvd\nSuite 150"
+            },
+            "n": "address",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "address"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-4321",
+            "n": "defphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "default phone"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-4321",
+            "n": "homephone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "home"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-1234",
+            "n": "cellphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "cell"
+          },
+          {
+            "k": "phone",
+            "n": "busphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "business"
+          }
+        ]
+      },
+      {
+        "name": "internet",
+        "title": "Internet Details",
+        "fields": [
+          {
+            "k": "string",
+            "v": "WendyAppleseed",
+            "n": "username",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "username"
+          },
+          {
+            "k": "string",
+            "n": "reminderq",
+            "v": "What's your favorite application?",
+            "t": "reminder question"
+          },
+          {
+            "k": "string",
+            "n": "remindera",
+            "v": "1Password",
+            "t": "reminder answer"
+          },
+          {
+            "k": "string",
+            "v": "wendy@appleseed.com",
+            "n": "email",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "email"
+          },
+          {
+            "k": "string",
+            "n": "website",
+            "t": "website"
+          },
+          {
+            "k": "string",
+            "n": "icq",
+            "t": "ICQ"
+          },
+          {
+            "k": "string",
+            "n": "skype",
+            "v": "WendyAppleseed",
+            "t": "skype"
+          },
+          {
+            "k": "string",
+            "n": "aim",
+            "v": "WendyAppleseed76",
+            "t": "AOL/AIM"
+          },
+          {
+            "k": "string",
+            "n": "yahoo",
+            "t": "Yahoo"
+          },
+          {
+            "k": "string",
+            "n": "msn",
+            "t": "MSN"
+          },
+          {
+            "k": "string",
+            "n": "forumsig",
+            "t": "forum signature"
+          }
+        ]
+      }
+    ]
+  },
+  "13C8E12AC8E54B1F873BAB0824E521BC": {
+    "htmlForm": {
+      "htmlAction": "https://secure.hulu.com/account/authenticate",
+      "htmlName": "login-form",
+      "htmlMethod": "get"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "wendy@appleseed.com",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "type": "P",
+        "value": "frirp7i1ob7wig4d",
+        "designation": "password",
+        "name": "password"
+      },
+      {
+        "name": "",
+        "value": "",
+        "type": "I"
+      },
+      {
+        "name": "stayloggedin",
+        "value": "✓",
+        "type": "C"
+      }
+    ]
+  },
+  "1C7D72EFA19A4EE98DB7A9661D2F5732": {
+    "notesPlain": "Picture really doesn't look like Wendy",
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "fullname",
+            "v": "Wendy Appleseed",
+            "t": "full name"
+          },
+          {
+            "k": "string",
+            "n": "address",
+            "v": "5-150 Hollidge Blvd Suite 150",
+            "t": "address"
+          },
+          {
+            "k": "date",
+            "n": "birthdate",
+            "v": 359100000,
+            "t": "date of birth"
+          },
+          {
+            "k": "gender",
+            "n": "sex",
+            "v": "female",
+            "t": "sex"
+          },
+          {
+            "k": "string",
+            "n": "height",
+            "v": "175cm",
+            "t": "height"
+          },
+          {
+            "k": "string",
+            "n": "number",
+            "v": "D6101-40706-60905",
+            "t": "number"
+          },
+          {
+            "k": "string",
+            "n": "class",
+            "v": "G2",
+            "t": "license class"
+          },
+          {
+            "k": "string",
+            "n": "conditions",
+            "v": "J",
+            "t": "conditions / restrictions"
+          },
+          {
+            "k": "string",
+            "n": "state",
+            "v": "Ontario",
+            "t": "state"
+          },
+          {
+            "k": "string",
+            "n": "country",
+            "v": "Canada",
+            "t": "country"
+          },
+          {
+            "k": "monthYear",
+            "n": "expiry_date",
+            "v": 2515,
+            "t": "expiry date"
+          }
+        ]
+      }
+    ]
+  },
+  "27DCFA2810B24083A3ECC7CEABC7C0A9": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "menu",
+            "n": "database_type",
+            "v": "mysql",
+            "t": "type"
+          },
+          {
+            "k": "string",
+            "n": "hostname",
+            "v": "10.0.1.50",
+            "t": "server"
+          },
+          {
+            "k": "string",
+            "n": "port",
+            "v": "3066",
+            "t": "port"
+          },
+          {
+            "k": "string",
+            "n": "database",
+            "v": "orders_production",
+            "t": "database"
+          },
+          {
+            "k": "string",
+            "n": "username",
+            "v": "orders_app",
+            "t": "username"
+          },
+          {
+            "k": "concealed",
+            "n": "password",
+            "v": "tgOhmpU9HgC5Hz",
+            "t": "password"
+          },
+          {
+            "k": "string",
+            "n": "sid",
+            "t": "SID"
+          },
+          {
+            "k": "string",
+            "n": "alias",
+            "t": "alias"
+          },
+          {
+            "k": "string",
+            "n": "options",
+            "t": "connection options"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "Sample database account."
+  },
+  "2A632FDD32F5445E91EB5636C7580447": {
+    "htmlForm": {
+      "htmlID": "signInForm",
+      "htmlAction": "https://secure.skype.com/account/login",
+      "htmlMethod": "post"
+    },
+    "fields": [
+      {
+        "value": "WendyAppleseed",
+        "type": "T",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "value": "dej3ur9unsh5ian1and5",
+        "type": "P",
+        "designation": "password",
+        "name": "password"
+      },
+      {
+        "name": "",
+        "value": "",
+        "type": "B"
+      }
+    ]
+  },
+  "358B7411EB8B45CD9CE592ED16F3E9DE": {
+    "htmlForm": {
+      "htmlID": "loginForm",
+      "htmlName": "loginForm",
+      "htmlMethod": "post"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "wendy@appleseed.com",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "type": "P",
+        "value": "snaip5uc5keds7as5ocs",
+        "designation": "password",
+        "name": "password"
+      }
+    ]
+  },
+  "372E1D51AA1D44CB9F17D8AA70ADA9A6": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "url",
+            "v": "example.com",
+            "t": "URL"
+          },
+          {
+            "k": "string",
+            "n": "username",
+            "v": "wappleseed",
+            "t": "username"
+          },
+          {
+            "k": "concealed",
+            "n": "password",
+            "v": "My4scQNoFw8JcvN",
+            "t": "password"
+          }
+        ]
+      },
+      {
+        "name": "admin_console",
+        "title": "Admin Console",
+        "fields": [
+          {
+            "k": "string",
+            "n": "admin_console_url",
+            "t": "admin console URL"
+          },
+          {
+            "k": "string",
+            "n": "admin_console_username",
+            "t": "admin console username"
+          },
+          {
+            "k": "concealed",
+            "n": "admin_console_password",
+            "t": "console password"
+          }
+        ]
+      },
+      {
+        "name": "hosting_provider_details",
+        "title": "Hosting Provider",
+        "fields": [
+          {
+            "k": "string",
+            "n": "name",
+            "v": "Example Hosting provider",
+            "t": "name"
+          },
+          {
+            "k": "string",
+            "n": "website",
+            "v": "http://services.example.com",
+            "t": "website"
+          },
+          {
+            "k": "string",
+            "n": "support_contact_url",
+            "t": "support URL"
+          },
+          {
+            "k": "string",
+            "n": "support_contact_phone",
+            "t": "support phone"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "I should  attach an SSH key, but maybe later."
+  },
+  "468B1E24F93B413DAD57ABE6F1C01DF6": {
+    "htmlForm": {
+      "htmlAction": "https://www.getdropbox.com/login",
+      "htmlMethod": "post"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "wendy@appleseed.com",
+        "designation": "username",
+        "name": "email"
+      },
+      {
+        "type": "P",
+        "value": "vet4juf4nim1ow6ay2ph",
+        "designation": "password",
+        "name": "password"
+      },
+      {
+        "name": "",
+        "value": "Log in",
+        "type": "B"
+      },
+      {
+        "name": "remember_me",
+        "value": "",
+        "type": "C"
+      }
+    ]
+  },
+  "4E36C011EE8348B1B24418218B04018C": {
+    "fields": [
+      {
+        "name": "username",
+        "value": "admin",
+        "type": "T",
+        "designation": "username"
+      },
+      {
+        "name": "password",
+        "value": "auj7r5?u61ww",
+        "type": "P",
+        "designation": "password"
+      }
+    ],
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "path",
+            "v": "/home/product/secert",
+            "t": "path"
+          }
+        ]
+      },
+      {
+        "name": "provider",
+        "title": "Provider"
+      }
+    ],
+    "notesPlain": "Sample FTP account."
+  },
+  "5ADFF73C09004C448D45565BC4750DE2": {
+    "htmlForm": {
+      "htmlAction": "/login",
+      "htmlMethod": "post",
+      "htmlID": "account_form"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "wendy@appleseed.com",
+        "designation": "username",
+        "name": "email"
+      },
+      {
+        "type": "P",
+        "value": "vow6wem2wo",
+        "designation": "password",
+        "name": "password"
+      },
+      {
+        "name": "",
+        "value": "Log in",
+        "type": "B"
+      },
+      {
+        "name": "q",
+        "value": "Search Tumblr",
+        "type": "T"
+      }
+    ]
+  },
+  "67979020CCA54120BAFA2742C3F23F2B": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "name",
+            "v": "Wendy Appleseed",
+            "t": "name"
+          },
+          {
+            "k": "concealed",
+            "v": "555-55-1234",
+            "n": "number",
+            "a": {
+              "generate": "off"
+            },
+            "t": "number"
+          }
+        ]
+      }
+    ]
+  },
+  "72366D161D9E43D98E58EB801DAD1EF8": {
+    "htmlForm": {
+      "htmlAction": "/login/",
+      "htmlMethod": "post"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "WendyAppleseed",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "type": "P",
+        "value": "dowg1af5kam7oak9at",
+        "designation": "password",
+        "name": "password"
+      },
+      {
+        "name": "login",
+        "value": "Come on in",
+        "type": "B"
+      }
+    ]
+  },
+  "8445A23B5740455DA360FEA379C3CC90": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "company_name",
+            "v": "Tim Hortens",
+            "t": "company name"
+          },
+          {
+            "k": "string",
+            "n": "member_name",
+            "v": "Wendy Appleseed",
+            "t": "member name"
+          },
+          {
+            "k": "string",
+            "v": "12123123",
+            "n": "membership_no",
+            "a": {
+              "clipboardFilter": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+            },
+            "t": "member ID"
+          },
+          {
+            "k": "concealed",
+            "n": "pin",
+            "v": "Y7s8WaRGJBAz",
+            "t": "PIN"
+          }
+        ]
+      },
+      {
+        "name": "extra",
+        "title": "More Information",
+        "fields": [
+          {
+            "k": "string",
+            "n": "additional_no",
+            "t": "member ID (additional)"
+          },
+          {
+            "k": "monthYear",
+            "n": "member_since",
+            "t": "member since"
+          },
+          {
+            "k": "string",
+            "n": "customer_service_phone",
+            "t": "customer service phone"
+          },
+          {
+            "k": "phone",
+            "n": "reservations_phone",
+            "t": "phone for reserva​tions"
+          },
+          {
+            "k": "URL",
+            "n": "website",
+            "t": "website"
+          }
+        ]
+      }
+    ]
+  },
+  "A2D44483145F4B41A849FE5FEA4B504D": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "name",
+            "v": "Wendy Appleseed",
+            "t": "full name"
+          },
+          {
+            "k": "date",
+            "n": "valid_from",
+            "t": "valid from"
+          },
+          {
+            "k": "date",
+            "n": "expires",
+            "v": 1672470000,
+            "t": "expires"
+          },
+          {
+            "k": "string",
+            "n": "game",
+            "v": "North American Snipe",
+            "t": "approved wildlife"
+          },
+          {
+            "k": "string",
+            "n": "quota",
+            "v": "Two game wardens, seven hunters, and a cow",
+            "t": "maximum quota"
+          },
+          {
+            "k": "string",
+            "n": "state",
+            "t": "state"
+          },
+          {
+            "k": "string",
+            "n": "country",
+            "t": "country"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "\"I went out and shot the maximum the game laws would allow.\nTwo game wardens, seven hunters, and a cow.\n\nThey took away my license, the worst punishment I ever endured.\nTurns out there was a reason,\nCows were out of season,\nAnd one of the hunters wasn't insured.\""
+  },
+  "D06307ADA44C4031BA2FF4B174DE79CB": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "v": "Wendy Appleseed",
+            "n": "cardholder",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "cardholder name"
+          },
+          {
+            "k": "cctype",
+            "v": "mc",
+            "n": "type",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "type"
+          },
+          {
+            "k": "string",
+            "v": "1234 5678 9012 3456",
+            "n": "ccnum",
+            "a": {
+              "clipboardFilter": "0123456789",
+              "guarded": "yes"
+            },
+            "t": "number"
+          },
+          {
+            "k": "concealed",
+            "v": "123",
+            "n": "cvv",
+            "a": {
+              "guarded": "yes",
+              "generate": "off"
+            },
+            "t": "verification number"
+          },
+          {
+            "k": "monthYear",
+            "v": 201411,
+            "n": "expiry",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "expiry date"
+          },
+          {
+            "k": "monthYear",
+            "n": "validFrom",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "valid from"
+          }
+        ]
+      },
+      {
+        "name": "contactInfo",
+        "title": "Contact Information",
+        "fields": [
+          {
+            "k": "string",
+            "n": "bank",
+            "v": "CapitalOne",
+            "t": "issuing bank"
+          },
+          {
+            "k": "phone",
+            "n": "phoneLocal",
+            "t": "phone (local)"
+          },
+          {
+            "k": "phone",
+            "n": "phoneTollFree",
+            "v": "1-888-888-8888",
+            "t": "phone (toll free)"
+          },
+          {
+            "k": "phone",
+            "n": "phoneIntl",
+            "t": "phone (intl)"
+          },
+          {
+            "k": "URL",
+            "n": "website",
+            "v": "capitalone.com",
+            "t": "website"
+          }
+        ]
+      },
+      {
+        "name": "details",
+        "title": "Additional Details",
+        "fields": [
+          {
+            "k": "concealed",
+            "v": "234",
+            "n": "pin",
+            "a": {
+              "generate": "off"
+            },
+            "t": "PIN"
+          },
+          {
+            "k": "string",
+            "n": "creditLimit",
+            "v": "$8,000",
+            "t": "credit limit"
+          },
+          {
+            "k": "string",
+            "n": "cashLimit",
+            "v": "$2,000",
+            "t": "cash withdrawal limit"
+          },
+          {
+            "k": "string",
+            "n": "interest",
+            "v": "19.8%",
+            "t": "interest rate"
+          },
+          {
+            "k": "string",
+            "n": "issuenumber",
+            "t": "issue number"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "Sample data, not a real credit card number."
+  },
+  "D1820AA8CB534AC6A4B5A2C0263FD3B2": {
+    "notesPlain": "\nSecure Notes enable you to keep any information in freeform text format while keeping it safely encrypted along with the rest of your 1Password data. \n\nJust like the website passwords and credit card numbers you can store in 1Password, you (or someone else!) cannot get to your Secure Notes without entering your keychain’s Master Password. \n\nThis provides encrypted storage for your stuff that doesn’t fit into other areas of 1Password.\n"
+  },
+  "D8F79F17D6384808848B213EB4946ECA": {
+    "htmlForm": {
+      "htmlAction": "http://digg.com/login/prepare/digg",
+      "htmlMethod": "post"
+    },
+    "fields": [
+      {
+        "type": "T",
+        "value": "WendyAppleseed",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "type": "P",
+        "value": "tiac1nut2jab1eiv2oc5",
+        "designation": "password",
+        "name": "password"
+      }
+    ]
+  },
+  "E0D293D29B10483F8DFDAC72ED0BE5C0": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "type",
+            "v": "Passport",
+            "t": "type"
+          },
+          {
+            "k": "string",
+            "n": "issuing_country",
+            "v": "Canada",
+            "t": "issuing country"
+          },
+          {
+            "k": "string",
+            "n": "number",
+            "v": "ZZ200000",
+            "t": "number"
+          },
+          {
+            "k": "string",
+            "n": "fullname",
+            "v": "Wendy Appleseed",
+            "t": "full name"
+          },
+          {
+            "k": "gender",
+            "n": "sex",
+            "v": "female",
+            "t": "sex"
+          },
+          {
+            "k": "string",
+            "n": "nationality",
+            "v": "Canada",
+            "t": "nationality"
+          },
+          {
+            "k": "string",
+            "n": "issuing_authority",
+            "v": "Home Office",
+            "t": "issuing authority"
+          },
+          {
+            "k": "date",
+            "n": "birthdate",
+            "v": 359100000,
+            "t": "date of birth"
+          },
+          {
+            "k": "string",
+            "n": "birthplace",
+            "v": "Yellowknife, NT",
+            "t": "place of birth"
+          },
+          {
+            "k": "date",
+            "n": "issue_date",
+            "v": 954828000,
+            "t": "issued on"
+          },
+          {
+            "k": "date",
+            "n": "expiry_date",
+            "v": 1585893600,
+            "t": "expiry date"
+          }
+        ]
+      }
+    ]
+  },
+  "E482B70C038D4DD78A0940728FA737BF": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "v": "Wendy Appleseed",
+            "n": "cardholder",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "cardholder name"
+          },
+          {
+            "k": "cctype",
+            "v": "visa",
+            "n": "type",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "type"
+          },
+          {
+            "k": "string",
+            "v": "1234 5678 9012 4356",
+            "n": "ccnum",
+            "a": {
+              "clipboardFilter": "0123456789",
+              "guarded": "yes"
+            },
+            "t": "number"
+          },
+          {
+            "k": "concealed",
+            "v": "543",
+            "n": "cvv",
+            "a": {
+              "guarded": "yes",
+              "generate": "off"
+            },
+            "t": "verification number"
+          },
+          {
+            "k": "monthYear",
+            "v": 201905,
+            "n": "expiry",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "expiry date"
+          },
+          {
+            "k": "monthYear",
+            "n": "validFrom",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "valid from"
+          }
+        ]
+      },
+      {
+        "name": "contactInfo",
+        "title": "Contact Information",
+        "fields": [
+          {
+            "k": "string",
+            "n": "bank",
+            "v": "Chase",
+            "t": "issuing bank"
+          },
+          {
+            "k": "phone",
+            "n": "phoneLocal",
+            "t": "phone (local)"
+          },
+          {
+            "k": "phone",
+            "n": "phoneTollFree",
+            "v": "1-888-888-8888",
+            "t": "phone (toll free)"
+          },
+          {
+            "k": "phone",
+            "n": "phoneIntl",
+            "t": "phone (intl)"
+          },
+          {
+            "k": "URL",
+            "n": "website",
+            "v": "www.chase.com",
+            "t": "website"
+          }
+        ]
+      },
+      {
+        "name": "details",
+        "title": "Additional Details",
+        "fields": [
+          {
+            "k": "concealed",
+            "v": "000",
+            "n": "pin",
+            "a": {
+              "generate": "off"
+            },
+            "t": "PIN"
+          },
+          {
+            "k": "string",
+            "n": "creditLimit",
+            "v": "$5,000.00",
+            "t": "credit limit"
+          },
+          {
+            "k": "string",
+            "n": "cashLimit",
+            "v": "$1,000.00",
+            "t": "cash withdrawal limit"
+          },
+          {
+            "k": "string",
+            "n": "interest",
+            "v": "29.9%",
+            "t": "interest rate"
+          },
+          {
+            "k": "string",
+            "n": "issuenumber",
+            "t": "issue number"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "Sample data, not a real credit card number."
+  },
+  "EC0A40400ABB4B16926B7417E95C9669": {
+    "htmlForm": {
+      "htmlAction": "/search/Search.do",
+      "htmlName": "SiteSearchForm",
+      "htmlMethod": "post"
+    },
+    "passwordHistory": [
+      {
+        "value": "speg5nu5di1mol4niev9",
+        "time": 1325484162
+      }
+    ],
+    "fields": [
+      {
+        "type": "T",
+        "value": "WendyAppleseed",
+        "designation": "username",
+        "name": "username"
+      },
+      {
+        "type": "T",
+        "value": "reTDx8KHhW8eAc",
+        "designation": "password",
+        "name": "password"
+      }
+    ]
+  },
+  "F2DB5DA3FCA64372A751E0E85C67A538": {
+    "notesPlain": "This note has two attachments."
+  },
+  "F3707FA58EA7480884BC6A662658E039": {
+    "sections": [
+      {
+        "name": "name",
+        "title": "Identification",
+        "fields": [
+          {
+            "k": "string",
+            "v": "Wendy",
+            "n": "firstname",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "first name"
+          },
+          {
+            "k": "string",
+            "n": "initial",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "initial"
+          },
+          {
+            "k": "string",
+            "v": "Appleseed",
+            "n": "lastname",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "last name"
+          },
+          {
+            "k": "menu",
+            "v": "female",
+            "n": "sex",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "sex"
+          },
+          {
+            "k": "date",
+            "v": 361778400,
+            "n": "birthdate",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "birth date"
+          },
+          {
+            "k": "string",
+            "v": "Customer Relations",
+            "n": "occupation",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "occupation"
+          },
+          {
+            "k": "string",
+            "v": "AgileBits",
+            "n": "company",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "company"
+          },
+          {
+            "k": "string",
+            "v": "Customer Care",
+            "n": "department",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "department"
+          },
+          {
+            "k": "string",
+            "v": "Manager",
+            "n": "jobtitle",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "job title"
+          }
+        ]
+      },
+      {
+        "name": "address",
+        "title": "Address",
+        "fields": [
+          {
+            "k": "address",
+            "v": {
+              "city": "Aurora",
+              "zip": "L4G8A3",
+              "state": "Ontario",
+              "country": "ca",
+              "street": "5-150 Hollidge Blvd\nSuite 150"
+            },
+            "n": "address",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "address"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-5678",
+            "n": "defphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "default phone"
+          },
+          {
+            "k": "phone",
+            "n": "homephone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "home"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-1234",
+            "n": "cellphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "cell"
+          },
+          {
+            "k": "phone",
+            "v": "(555) 555-5678",
+            "n": "busphone",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "business"
+          }
+        ]
+      },
+      {
+        "name": "internet",
+        "title": "Internet Details",
+        "fields": [
+          {
+            "k": "string",
+            "v": "WendyAppleseed",
+            "n": "username",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "username"
+          },
+          {
+            "k": "string",
+            "n": "reminderq",
+            "v": "What's your favorite application?",
+            "t": "reminder question"
+          },
+          {
+            "k": "string",
+            "n": "remindera",
+            "v": "1Password",
+            "t": "reminder answer"
+          },
+          {
+            "k": "string",
+            "v": "support@agilebits",
+            "n": "email",
+            "a": {
+              "guarded": "yes"
+            },
+            "t": "email"
+          },
+          {
+            "k": "string",
+            "n": "website",
+            "v": "www.agilebits.com",
+            "t": "website"
+          },
+          {
+            "k": "string",
+            "n": "icq",
+            "t": "ICQ"
+          },
+          {
+            "k": "string",
+            "n": "skype",
+            "t": "skype"
+          },
+          {
+            "k": "string",
+            "n": "aim",
+            "t": "AOL/AIM"
+          },
+          {
+            "k": "string",
+            "n": "yahoo",
+            "t": "Yahoo"
+          },
+          {
+            "k": "string",
+            "n": "msn",
+            "t": "MSN"
+          },
+          {
+            "k": "string",
+            "n": "forumsig",
+            "v": "1Password — Never forget your password again.",
+            "t": "forum signature"
+          }
+        ]
+      }
+    ]
+  },
+  "F5F099B210F248348E22934DDC3338B2": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "product_version",
+            "v": "1.3",
+            "t": "version"
+          },
+          {
+            "k": "string",
+            "n": "reg_code",
+            "v": "TEXTEXP001-1234-ABCD-5678-EFGH",
+            "t": "license key"
+          }
+        ]
+      },
+      {
+        "name": "customer",
+        "title": "Customer",
+        "fields": [
+          {
+            "k": "string",
+            "n": "reg_name",
+            "v": "Wendy Appleseed",
+            "t": "licensed to"
+          },
+          {
+            "k": "email",
+            "n": "reg_email",
+            "v": "wendy@appleseed.com",
+            "t": "registered email"
+          },
+          {
+            "k": "string",
+            "n": "company",
+            "t": "company"
+          }
+        ]
+      },
+      {
+        "name": "publisher",
+        "title": "Publisher",
+        "fields": [
+          {
+            "k": "URL",
+            "n": "download_link",
+            "v": "www.smileonmymac.com/TextExpander/download.html",
+            "t": "download page"
+          },
+          {
+            "k": "string",
+            "n": "publisher_name",
+            "v": "Smile On My Mac, LLC",
+            "t": "publisher"
+          },
+          {
+            "k": "URL",
+            "n": "publisher_website",
+            "v": "www.smileonmymac.com",
+            "t": "website"
+          },
+          {
+            "k": "string",
+            "n": "retail_price",
+            "v": "29.95",
+            "t": "retail price"
+          },
+          {
+            "k": "email",
+            "n": "support_email",
+            "v": "support@smileonmymac.com",
+            "t": "support email"
+          }
+        ]
+      },
+      {
+        "name": "order",
+        "title": "Order",
+        "fields": [
+          {
+            "k": "date",
+            "n": "order_date",
+            "t": "purchase date"
+          },
+          {
+            "k": "string",
+            "n": "order_number",
+            "t": "order number"
+          },
+          {
+            "k": "string",
+            "n": "order_total",
+            "t": "order total"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "This is a sample software license.\n\nTextExpander saves you countless keystrokes with customized abbreviations for your frequently-used text strings and images."
+  },
+  "F7883ADDE5944B349ABB5CBEC20F39BE": {
+    "fields": [
+      {
+        "name": "username",
+        "value": "wendy.appleseed@me.com",
+        "type": "T",
+        "designation": "username"
+      },
+      {
+        "name": "password",
+        "value": "iINe4uig8suLny",
+        "type": "P",
+        "designation": "password"
+      }
+    ],
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "member_name",
+            "v": "wendy.appleseed",
+            "t": "Member name"
+          },
+          {
+            "k": "string",
+            "n": "idisk_storage",
+            "v": "10GB",
+            "t": "iDisk Storage"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "Sample MobileMe account."
+  },
+  "F78CEC04078743B6975511A6FDDBED7E": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "product_version",
+            "v": "3.0",
+            "t": "version"
+          },
+          {
+            "k": "string",
+            "n": "reg_code",
+            "v": "1PW3-0000-000000-0000",
+            "t": "license key"
+          }
+        ]
+      },
+      {
+        "name": "customer",
+        "title": "Customer",
+        "fields": [
+          {
+            "k": "string",
+            "n": "reg_name",
+            "v": "Wendy Appleseed",
+            "t": "licensed to"
+          },
+          {
+            "k": "email",
+            "n": "reg_email",
+            "v": "wendy@appleseed.com",
+            "t": "registered email"
+          },
+          {
+            "k": "string",
+            "n": "company",
+            "t": "company"
+          }
+        ]
+      },
+      {
+        "name": "publisher",
+        "title": "Publisher",
+        "fields": [
+          {
+            "k": "URL",
+            "n": "download_link",
+            "v": "http://agilebits.com/downloads",
+            "t": "download page"
+          },
+          {
+            "k": "string",
+            "n": "publisher_name",
+            "v": "AgileBits",
+            "t": "publisher"
+          },
+          {
+            "k": "URL",
+            "n": "publisher_website",
+            "v": "http://1password.com",
+            "t": "website"
+          },
+          {
+            "k": "string",
+            "n": "retail_price",
+            "t": "retail price"
+          },
+          {
+            "k": "email",
+            "n": "support_email",
+            "v": "support@agilebits.com",
+            "t": "support email"
+          }
+        ]
+      },
+      {
+        "name": "order",
+        "title": "Order",
+        "fields": [
+          {
+            "k": "date",
+            "n": "order_date",
+            "t": "purchase date"
+          },
+          {
+            "k": "string",
+            "n": "order_number",
+            "t": "order number"
+          },
+          {
+            "k": "string",
+            "n": "order_total",
+            "t": "order total"
+          }
+        ]
+      }
+    ],
+    "notesPlain": "This is a sample software license.\n\n1Password securely keeps track of online logins, generates strong passwords, enters personal and credit card information with one click, protects from fishing attacks, and more!\n"
+  },
+  "FD2EADB43C4F4FC7BEB35A1692DDFDEA": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "menu",
+            "n": "pop_type",
+            "v": "imap",
+            "t": "type"
+          },
+          {
+            "k": "string",
+            "n": "pop_username",
+            "v": "wendy.appleseed@me.com",
+            "t": "username"
+          },
+          {
+            "k": "string",
+            "n": "pop_server",
+            "v": "imap.mail.me.com",
+            "t": "server"
+          },
+          {
+            "k": "string",
+            "n": "pop_port",
+            "v": "993",
+            "t": "port number"
+          },
+          {
+            "k": "concealed",
+            "n": "pop_password",
+            "v": "iINe4uig8suLny",
+            "t": "password"
+          },
+          {
+            "k": "menu",
+            "n": "pop_security",
+            "v": "SSL",
+            "t": "security"
+          },
+          {
+            "k": "menu",
+            "n": "pop_authentication",
+            "v": "password",
+            "t": "auth​ method"
+          }
+        ]
+      },
+      {
+        "name": "SMTP",
+        "title": "SMTP",
+        "fields": [
+          {
+            "k": "string",
+            "n": "smtp_server",
+            "v": "smtp.mail.me.com",
+            "t": "SMTP server"
+          },
+          {
+            "k": "string",
+            "n": "smtp_port",
+            "v": "587",
+            "t": "port number"
+          },
+          {
+            "k": "string",
+            "n": "smtp_username",
+            "v": "wendy.appleseed@me.com",
+            "t": "username"
+          },
+          {
+            "k": "concealed",
+            "n": "smtp_password",
+            "v": "iINe4uig8suLny",
+            "t": "password"
+          },
+          {
+            "k": "menu",
+            "n": "smtp_security",
+            "v": "TLS",
+            "t": "security"
+          },
+          {
+            "k": "menu",
+            "n": "smtp_authentication",
+            "v": "password",
+            "t": "auth​ method"
+          }
+        ]
+      },
+      {
+        "name": "Contact Information",
+        "title": "Contact Information",
+        "fields": [
+          {
+            "k": "string",
+            "n": "provider",
+            "t": "provider"
+          },
+          {
+            "k": "string",
+            "n": "provider_website",
+            "t": "provider's website"
+          },
+          {
+            "k": "string",
+            "n": "phone_local",
+            "t": "phone (local)"
+          },
+          {
+            "k": "string",
+            "n": "phone_tollfree",
+            "t": "phone (toll free)"
+          }
+        ]
+      }
+    ]
+  },
+  "FF445AB1497241A28812363154E1A738": {
+    "sections": [
+      {
+        "name": "",
+        "title": "",
+        "fields": [
+          {
+            "k": "string",
+            "n": "org_name",
+            "t": "group"
+          },
+          {
+            "k": "URL",
+            "n": "website",
+            "v": "http://www.urbana.edu/resources/community/johnny-appleseed/appleseed-society.html",
+            "t": "website"
+          },
+          {
+            "k": "phone",
+            "n": "phone",
+            "t": "telephone"
+          },
+          {
+            "k": "string",
+            "n": "member_name",
+            "v": "Wendy Appleseed",
+            "t": "member name"
+          },
+          {
+            "k": "monthYear",
+            "n": "member_since",
+            "t": "member since"
+          },
+          {
+            "k": "monthYear",
+            "n": "expiry_date",
+            "v": 2625,
+            "t": "expiry date"
+          },
+          {
+            "k": "string",
+            "n": "membership_no",
+            "v": "123456",
+            "t": "member ID"
+          },
+          {
+            "k": "concealed",
+            "n": "pin",
+            "v": "B8HqCdCMAY8KxJqg",
+            "t": "password"
+          }
+        ]
+      }
+    ]
+  }
+}
