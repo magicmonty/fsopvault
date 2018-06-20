@@ -65,3 +65,9 @@ module Json =
       JsonConvert.DeserializeObject<'a> json |> Ok
     with
     | _ -> JSONParserError json |> ParserError |> Error
+
+  let serialize<'a> (o: 'a) = 
+    try
+      Ok (JsonConvert.SerializeObject o)
+    with
+    | e -> UnknownError e.Message |> Error

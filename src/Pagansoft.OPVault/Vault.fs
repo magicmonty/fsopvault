@@ -1,34 +1,42 @@
 namespace Pagansoft.OPVault
 
 open FSharp.Results.Results
+open ResultOperators
 
 type LockedVault = { VaultDir: string }
 
                     member this.Unlock password =
+                      let decryptProfile () = 
+                        Profile.read (sprintf "%s/profile.js" this.VaultDir)
+                        |-> Profile.decrypt password
+                        |-> Profile.getDecryptedProfileData 
+                       
                       trial {
-                        let! encryptedProfile = Profile.read (sprintf "%s/profile.js" this.VaultDir)
-                        let! decryptedProfile = Profile.decrypt password encryptedProfile
-                        let! profileData = decryptedProfile |> Profile.getDecryptedProfileData 
-                        let! bandFiles =
-                          [ for i in 0 .. 15 -> 
-                              let bandNumber = (sprintf "%x" i).ToUpper()
-                              let filename = sprintf "%s/band_%s.js" this.VaultDir bandNumber
-                              filename |> BandFile.read profileData.OverviewKey ] 
-                          |> FSharp.Results.Result.fold
-                        let items = bandFiles |> List.collect (fun f -> f.Items |> Map.toList)
+                        let! profileData = decryptProfile()
+                        let! bandFiles = BandFile.readAll profileData.OverviewKey this.VaultDir
                         let! folders = Folder.read profileData.OverviewKey this.VaultDir 
   
                         return { VaultDir = this.VaultDir
                                  Profile = profileData
-                                 Items = items |> Map.ofList
+                                 BandFiles = bandFiles
                                  Folders = folders }
                       }
                       
 and UnlockedVault = { VaultDir: string
                       Profile: DecryptedProfileData
-                      Items: Map<UUID, BandFileItem>
+                      BandFiles: BandFile list
                       Folders: Map<UUID, Folder> }
                     
+                    member this.Items = 
+                      this.BandFiles 
+                      |> List.collect (fun f -> f.Items |> Map.toList) 
+                      |> Map.ofList
+                      
+                    member this.Keys = 
+                      this.BandFiles 
+                      |> List.collect (fun f -> f.Items |> Map.toList)
+                      |> List.map fst
+
                     member this.Lock () =
                       { VaultDir = this.VaultDir }
 

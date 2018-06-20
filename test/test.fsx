@@ -17,21 +17,31 @@
 open Pagansoft.OPVault
 open FSharp.Results
 open FSharp.Results.Results
+open Newtonsoft
 open Newtonsoft.Json
+open Newtonsoft.Json.Linq
+open System.IO
 
 let password = "freddy"
-let vaultDir = "test/testdata/onepassword_data/default"
-let vault = { VaultDir = "test/testdata/onepassword_data/default" }
-let unlockedVault = vault.Unlock password
+let vaultDir = "test/testdata/default"
+let vault = { VaultDir = vaultDir }
 
-trial {
-  let! unlocked = unlockedVault
-  let! items =    
-    unlocked.Items
-    |> Map.toList 
-    |> List.map snd 
-    |> List.map (fun f -> f.Decrypt unlocked.Profile.MasterKey)
-    |> Result.fold
+let items = 
+  trial {
+    let! unlocked = vault.Unlock password
+    return!
+      unlocked.Items
+      |> Map.toList 
+      |> List.map (fun (_, item) -> item.Decrypt unlocked.Profile.MasterKey)
+      |> Result.fold
+  } 
+  |> Result.defaultValue []
+  |> List.filter (fun i -> not i.MetaData.IsTrashed)
+  |> List.map (fun i -> i.MetaData.UUID, (match i.Data with | DecryptedBandFileItemData data -> data | _ -> ""))
+  |> List.filter (fun (_, i) -> i <> "")
+  |> List.map (fun (UUID uuid, data) -> uuid, JObject.Parse(data))
+  |> Map.ofList
 
-  return items |> List.map (fun f -> match f with BandFileItemData d -> d)
-} |> Result.defaultValue []
+let itemText = items |> Json.serialize |> Result.defaultValue ""
+
+File.WriteAllText("test/items.json", itemText)
