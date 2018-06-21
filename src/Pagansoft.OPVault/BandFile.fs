@@ -33,7 +33,7 @@ type BandFileItemKey = { HMAC: byte array
 
 type BandFileItemData =
   | EncryptedBandFileItemData of byte array
-  | DecryptedBandFileItemData of string
+  | DecryptedBandFileItemData of Item
 
   member this.Decrypt (itemKey: KeyPair) =
     match this with
@@ -43,8 +43,9 @@ type BandFileItemData =
         let! encrypted = data |> OPData.parseBytes
         let! decrypted = encrypted.Decrypt itemKey
         let! plainText = decrypted.PlainTextAsString ()
+        let! item = Item.deserialize plainText
 
-        return plainText |> DecryptedBandFileItemData
+        return item |> DecryptedBandFileItemData
       }
 
 type BandFileItem = { MetaData: BandFileItemMetaData

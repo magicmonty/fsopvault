@@ -41,12 +41,7 @@ let items =
   } 
   |> Result.defaultValue []
   |> List.filter (fun i -> not i.MetaData.IsTrashed)
-  |> List.map (fun i -> i.MetaData.UUID, (match i.Data with | DecryptedBandFileItemData data -> data | _ -> ""))
-  |> List.filter (fun (_, i) -> i <> "")
+  |> List.map (fun i -> i.MetaData.UUID, i.Data)
+  |> Map.ofList
 
-let deserialized =
-  items
-  |> List.map (fun (UUID uuid, data) -> Item.deserialize data |=> fun data -> (uuid, data) )
-  |> Result.fold
-  |> Result.defaultValue []
-
+items.[UUID "4E36C011EE8348B1B24418218B04018C"]
