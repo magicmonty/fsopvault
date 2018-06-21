@@ -31,10 +31,14 @@ type BandFileError =
   | InvalidBandFileFormat
   | UnknownCategory of string
   
+type VaultError =
+  | VaultIsLocked 
+
 type OPVaultError =
   | FileError of FileError
   | ProfileError of ProfileError
   | ParserError of ParserError
   | OPDataError of OPDataError
   | BandFileError of BandFileError
+  | VaultError of VaultError
   | UnknownError of string

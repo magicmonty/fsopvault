@@ -28,20 +28,19 @@ open System.IO
 
 let password = "freddy"
 let vaultDir = "test/testdata/default"
-let vault = { VaultDir = vaultDir }
+let vault =  LockedVault { VaultDir = vaultDir }
 
 let items = 
   trial {
-    let! unlocked = vault.Unlock password
-    return!
-      unlocked.Items
-      |> Map.toList 
-      |> List.map (fun (_, item) -> item.Decrypt unlocked.Profile.MasterKey)
-      |> Result.fold
+    let! unlocked = vault |> Vault.unlock password
+    return! unlocked 
+            |> Vault.getKeysByTitle "Company's FTP"
   } 
   |> Result.defaultValue []
-  |> List.filter (fun i -> not i.MetaData.IsTrashed)
-  |> List.map (fun i -> i.MetaData.UUID, i.Data)
-  |> Map.ofList
-
-items.[UUID "4E36C011EE8348B1B24418218B04018C"]
+ 
+let item = 
+  trial {
+    let! unlocked = vault |> Vault.unlock password
+    return! unlocked 
+            |> Vault.getItemByUUID (UUID "4E36C011EE8348B1B24418218B04018C")
+  }
