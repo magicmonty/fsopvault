@@ -31,6 +31,12 @@ module DateTime =
     let dtDateTime = System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
     (dtDateTime.AddSeconds (float value)).ToLocalTime()
 
+module Array =
+  let fromNullable (value: 'a array) : 'a array =
+    match value with
+    | null -> [||]
+    | v -> v
+
 [<RequireQualifiedAccess>]
 module Option=
   let fromNullable (value: System.Nullable<'a>) : 'a option =
@@ -59,6 +65,7 @@ module ResultOperators =
 
 module Json = 
   open Newtonsoft.Json
+  open Newtonsoft.Json.Linq
   
   let deserialize<'a> (json: string) = 
     try
@@ -71,3 +78,15 @@ module Json =
       Ok (JsonConvert.SerializeObject o)
     with
     | e -> UnknownError e.Message |> Error
+
+  let tryGetString (key:string) (object: JObject) =
+    match object.TryGetValue key with
+    | false, _ -> None
+    | true, token -> token.ToString () |> Some
+
+  let tryGetInt (key:string) (object: JObject) =
+    match object.TryGetValue key with
+    | false, _ -> None
+    | true, token -> 
+      let r = token.CreateReader()
+      r.ReadAsInt32 () |> Option.fromNullable

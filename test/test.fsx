@@ -3,6 +3,7 @@
 
 #load "../src/Pagansoft.OPVault/Types.fs"
 #load "../src/Pagansoft.OPVault/Designation.fs"
+#load "../src/Pagansoft.OPVault/FieldType.fs"
 #load "../src/Pagansoft.OPVault/Crypto.fs"
 #load "../src/Pagansoft.OPVault/Helpers.fs"
 #load "../src/Pagansoft.OPVault/Results.fs"
@@ -19,6 +20,7 @@
 open Pagansoft.OPVault
 open FSharp.Results
 open FSharp.Results.Results
+open ResultOperators
 open Newtonsoft
 open Newtonsoft.Json
 open Newtonsoft.Json.Linq
@@ -41,11 +43,10 @@ let items =
   |> List.filter (fun i -> not i.MetaData.IsTrashed)
   |> List.map (fun i -> i.MetaData.UUID, (match i.Data with | DecryptedBandFileItemData data -> data | _ -> ""))
   |> List.filter (fun (_, i) -> i <> "")
-  |> List.map (fun (UUID uuid, data) -> uuid, data)
 
-items 
-|> List.map snd 
-|> List.map JSON.ItemDTO.Deserialize
-JSON.ItemDTO.Deserialize itemText
+let deserialized =
+  items
+  |> List.map (fun (UUID uuid, data) -> Item.deserialize data |=> fun data -> (uuid, data) )
+  |> Result.fold
+  |> Result.defaultValue []
 
-File.WriteAllText("test/items.json", itemText)
